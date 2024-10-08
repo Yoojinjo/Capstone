@@ -3,6 +3,7 @@ import FullCalendar from "@fullcalendar/react"; // FullCalendar component
 import dayGridPlugin from "@fullcalendar/daygrid"; // For month view
 import timeGridPlugin from "@fullcalendar/timegrid"; // For week and day views
 import interactionPlugin from "@fullcalendar/interaction"; // Enables drag and drop
+import EventForm from "./EventForm";
 
 function Calendar() {
 	// Initial events state
@@ -21,25 +22,29 @@ function Calendar() {
 		},
 	]);
 
-	// Edit event Name click handler
+	const [editingEvent, setEditingEvent] = useState(null);
+
+	// Handle event click
 	const handleEventClick = (clickInfo) => {
-		// Prompt for editing the event title
-		// replace with form later
-		const newTitle = prompt(
-			"Enter a new title for the event",
-			clickInfo.event.title
+		setEditingEvent(clickInfo.event); // Set the selected event to be edited
+	};
+
+	// Handle form submission
+	const handleFormSubmit = (updatedEvent) => {
+		const updatedEvents = events.map((event) =>
+			event.id === updatedEvent.id ? updatedEvent : event
 		);
-		if (newTitle) {
-			// Update event title
-			const updatedEvents = events.map((event) =>
-				event.id === clickInfo.event.id // Use event id to find the correct event
-					? { ...event, title: newTitle }
-					: event
-			);
-			setEvents(updatedEvents); // Update state with new events array
-			// Update the event title in FullCalendar directly
-			clickInfo.event.setProp("title", newTitle);
-		}
+		setEvents(updatedEvents);
+		setEditingEvent(null); // Close the form
+	};
+	// Delete event
+	const handleDelete = (eventId) => {
+		setEvents(events.filter((event) => event.id !== eventId));
+		setSelectedEvent(null); // Close the edit form
+	};
+	// Handle form cancellation
+	const handleCancel = () => {
+		setEditingEvent(null);
 	};
 
 	// add new events by double-clicking on date
@@ -81,6 +86,15 @@ function Calendar() {
 					right: "dayGridMonth,timeGridWeek,timeGridDay",
 				}}
 			/>
+			{/* conditional render editing form */}
+			{editingEvent && (
+				<EventForm
+					event={editingEvent}
+					onSubmit={handleFormSubmit}
+					onDelete={handleDelete}
+					onCancel={handleCancel}
+				/>
+			)}
 		</div>
 	);
 }
