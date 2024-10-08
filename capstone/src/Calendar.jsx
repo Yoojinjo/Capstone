@@ -9,13 +9,13 @@ function Calendar() {
 	// Initial events state
 	const [events, setEvents] = useState([
 		{
-			id: 1, // Add an id for the event
+			id: "1", // Add an id for the event
 			title: "Tomato: Start Seeds",
 			start: "2024-10-15T10:00:00",
 			end: "2024-10-15T11:00:00",
 		},
 		{
-			id: 2,
+			id: "2",
 			title: "Tomato: Transplant",
 			start: "2024-10-16T12:00:00",
 			end: "2024-10-16T13:00:00",
@@ -26,7 +26,12 @@ function Calendar() {
 
 	// Handle event click
 	const handleEventClick = (clickInfo) => {
-		setEditingEvent(clickInfo.event); // Set the selected event to be edited
+		console.log("Clicked Event:", clickInfo.event);
+		const eventToEdit = events.find(
+			(event) => event.id === clickInfo.event.id
+		); // convert the FullCalendar event object back to state format
+		console.log("Event to Edit:", eventToEdit);
+		setEditingEvent(eventToEdit); // Set the selected event to be edited
 	};
 
 	// Handle form submission
@@ -40,7 +45,7 @@ function Calendar() {
 	// Delete event
 	const handleDelete = (eventId) => {
 		setEvents(events.filter((event) => event.id !== eventId));
-		setSelectedEvent(null); // Close the edit form
+		setEditingEvent(null); // Close the edit form
 	};
 	// Handle form cancellation
 	const handleCancel = () => {

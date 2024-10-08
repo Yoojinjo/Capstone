@@ -2,12 +2,10 @@ import React, { useState } from "react";
 
 const EventForm = ({ event, onSubmit, onDelete, onCancel }) => {
 	const [title, setTitle] = useState(event.title);
-	const [start, setStart] = useState(event.start);
-	const [end, setEnd] = useState(event.end);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		onSubmit({ ...event, title, start, end });
+		onSubmit({ ...event, title });
 	};
 	const handleDelete = () => {
 		onDelete(event.id); // Call the delete function with the event id
