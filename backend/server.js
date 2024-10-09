@@ -71,6 +71,18 @@ app.put("/events/:id", async (req, res) => {
 	}
 });
 
+// Delete an event
+app.delete("/events/:id", async (req, res) => {
+	const { id } = req.params;
+
+	try {
+		await Event.findByIdAndDelete(id);
+		res.sendStatus(204); // No content
+	} catch (error) {
+		res.status(500).send("Error deleting event");
+	}
+});
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
