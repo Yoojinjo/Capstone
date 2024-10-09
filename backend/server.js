@@ -54,6 +54,23 @@ app.post("/events", async (req, res) => {
 	}
 });
 
+// Update an event
+app.put("/events/:id", async (req, res) => {
+	const { id } = req.params;
+	const { title, start, end } = req.body;
+
+	try {
+		const updatedEvent = await Event.findByIdAndUpdate(
+			id,
+			{ title, start, end },
+			{ new: true }
+		);
+		res.json(updatedEvent);
+	} catch (error) {
+		res.status(500).send("Error updating event");
+	}
+});
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
