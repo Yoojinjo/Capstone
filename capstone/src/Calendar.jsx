@@ -1,28 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react"; // FullCalendar component
 import dayGridPlugin from "@fullcalendar/daygrid"; // For month view
 import timeGridPlugin from "@fullcalendar/timegrid"; // For week and day views
 import interactionPlugin from "@fullcalendar/interaction"; // Enables drag and drop
 import EventForm from "./EventForm";
+// API calls
+import { getEvents, createEvent, updateEvent, deleteEvent } from "./api";
 
 function Calendar() {
 	// Initial events state
-	const [events, setEvents] = useState([
-		{
-			id: "1", // Add an id for the event
-			title: "Tomato: Start Seeds",
-			start: "2024-10-15T10:00:00",
-			end: "2024-10-15T11:00:00",
-		},
-		{
-			id: "2",
-			title: "Tomato: Transplant",
-			start: "2024-10-16T12:00:00",
-			end: "2024-10-16T13:00:00",
-		},
-	]);
-
+	const [events, setEvents] = useState([]);
+	// state tracking if currently editing
 	const [editingEvent, setEditingEvent] = useState(null);
+
+	// Fetch events on component mount
+	useEffect(() => {
+		const fetchEvents = async () => {
+			const fetchedEvents = await getEvents();
+			setEvents(fetchedEvents);
+		};
+
+		fetchEvents();
+	}, []);
+
+	//	Hardcoded initial testing Placeholder
+	// const [events, setEvents] = useState([
+	// 	{
+	// 		id: "1", // Add an id for the event
+	// 		title: "Tomato: Start Seeds",
+	// 		start: "2024-10-15T10:00:00",
+	// 		end: "2024-10-15T11:00:00",
+	// 	},
+	// 	{
+	// 		id: "2",
+	// 		title: "Tomato: Transplant",
+	// 		start: "2024-10-16T12:00:00",
+	// 		end: "2024-10-16T13:00:00",
+	// 	},
+	// ]);
 
 	// Handle event click
 	const handleEventClick = (clickInfo) => {
