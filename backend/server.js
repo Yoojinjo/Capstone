@@ -76,8 +76,13 @@ app.delete("/events/:id", async (req, res) => {
 	const { id } = req.params;
 
 	try {
-		await Event.findByIdAndDelete(id);
-		res.sendStatus(204); // No content
+		const deletedEvent = await Event.findByIdAndDelete(id);
+
+		if (!deletedEvent) {
+			return res.status(404).send("Event not found");
+		}
+
+		res.sendStatus(200).json({ message: "Event deleted successfully" });
 	} catch (error) {
 		res.status(500).send("Error deleting event");
 	}
