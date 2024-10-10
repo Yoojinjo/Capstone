@@ -17,7 +17,12 @@ function Calendar() {
 	useEffect(() => {
 		const fetchEvents = async () => {
 			const fetchedEvents = await getEvents();
-			setEvents(fetchedEvents);
+			// Map MongoDB's _id to FullCalendar's id
+			const mappedEvents = fetchedEvents.map((event) => ({
+				...event,
+				id: event._id, // FullCalendar expects 'id', map _id to id
+			}));
+			setEvents(mappedEvents);
 		};
 
 		fetchEvents();
@@ -41,25 +46,49 @@ function Calendar() {
 
 	// Handle event click
 	const handleEventClick = (clickInfo) => {
-		console.log("Clicked Event:", clickInfo.event);
 		const eventToEdit = events.find(
-			(event) => event.id === clickInfo.event.id
-		); // convert the FullCalendar event object back to state format
-		console.log("Event to Edit:", eventToEdit);
-		setEditingEvent(eventToEdit); // Set the selected event to be edited
+			(event) => event.id === clickInfo.event.id // FullCalendar Use 'id'
+		);
+		setEditingEvent(eventToEdit);
 	};
+	// change code to work with MONGODB id
+	// const handleEventClick = (clickInfo) => {
+	// 	console.log("Clicked Event:", clickInfo.event);
+	// 	const eventToEdit = events.find(
+	// 		(event) => event.id === clickInfo.event.id
+	// 	); // convert the FullCalendar event object back to state format
+	// 	console.log("Event to Edit:", eventToEdit);
+	// 	setEditingEvent(eventToEdit); // Set the selected event to be edited
+	// };
 
 	// Handle form submission
-	const handleFormSubmit = (updatedEvent) => {
-		const updatedEvents = events.map((event) =>
-			event.id === updatedEvent.id ? updatedEvent : event
-		);
-		setEvents(updatedEvents);
-		setEditingEvent(null); // Close the form
+	const handleFormSubmit = async (updatedEvent) => {
+		if (editingEvent) {
+			await updateEvent(editingEvent._id, updatedEvent); // MongoDB _id for updates
+		} else {
+			await createEvent(updatedEvent);
+		}
+		const fetchedEvents = await getEvents();
+		// Map _id to id again after updating/creating
+		const mappedEvents = fetchedEvents.map((event) => ({
+			...event,
+			id: event._id,
+		}));
+		setEvents(mappedEvents);
+		setEditingEvent(null);
 	};
+
+	// const handleFormSubmit = (updatedEvent) => {
+	// 	const updatedEvents = events.map((event) =>
+	// 		event.id === updatedEvent.id ? updatedEvent : event
+	// 	);
+	// 	setEvents(updatedEvents);
+	// 	setEditingEvent(null); // Close the form
+	// };
+
 	// Delete event
 	const handleDelete = (eventId) => {
-		setEvents(events.filter((event) => event.id !== eventId));
+		setEvents(events.filter((event) => event._id !== eventId));
 		setEditingEvent(null); // Close the edit form
 	};
 	// Handle form cancellation
@@ -72,11 +101,9 @@ function Calendar() {
 
 	const handleDateClick = (dateClickInfo) => {
 		const currentTime = new Date().getTime();
-
+		// Check if last click was less than 300ms ago
 		if (currentTime - lastClickTime < 300) {
-			// Check if last click was less than 300ms ago
 			const newEvent = {
-				id: events.length + 1,
 				title: "New Event",
 				start: dateClickInfo.dateStr,
 				end: new Date(dateClickInfo.dateStr).setHours(
