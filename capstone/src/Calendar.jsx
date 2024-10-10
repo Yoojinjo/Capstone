@@ -66,7 +66,7 @@ function Calendar() {
 
 	// Handle form submission
 	const handleFormSubmit = async (updatedEvent) => {
-		if (editingEvent) {
+		if (editingEvent && editingEvent._id) {
 			await updateEvent(editingEvent._id, updatedEvent); // MongoDB _id for updates
 		} else {
 			await createEvent(updatedEvent);
@@ -78,6 +78,7 @@ function Calendar() {
 			id: event._id,
 		}));
 		setEvents(mappedEvents);
+		setEditingEvent(null);
 		setEditingEvent(null);
 	};
 
