@@ -92,8 +92,10 @@ function Calendar() {
 
 	// Delete event
 	const handleDelete = async (eventId) => {
-		await deleteEvent(eventId);
-		setEvents(events.filter((event) => event._id !== eventId));
+		if (editingEvent && editingEvent._id) {
+			await deleteEvent(editingEvent._id); // Use _id for deletion
+		}
+		setEvents(events.filter((event) => event._id !== editingEvent._id));
 		setEditingEvent(null);
 	};
 

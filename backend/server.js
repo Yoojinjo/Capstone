@@ -82,7 +82,7 @@ app.delete("/events/:id", async (req, res) => {
 			return res.status(404).send("Event not found");
 		}
 
-		res.sendStatus(200).json({ message: "Event deleted successfully" });
+		res.status(200).json({ message: "Event deleted successfully" });
 	} catch (error) {
 		res.status(500).send("Error deleting event");
 	}
