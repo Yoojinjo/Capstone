@@ -12,6 +12,8 @@ function Calendar() {
 	const [events, setEvents] = useState([]);
 	// state tracking if currently editing
 	const [editingEvent, setEditingEvent] = useState(null);
+	// Track if the event is new
+	const [isNewEvent, setIsNewEvent] = useState(false);
 
 	// Fetch events on component mount
 	useEffect(() => {
@@ -50,6 +52,7 @@ function Calendar() {
 			(event) => event.id === clickInfo.event.id // FullCalendar Use 'id'
 		);
 		setEditingEvent(eventToEdit);
+		setIsNewEvent(false); // Not a new event
 	};
 	// change code to work with MONGODB id
 	// const handleEventClick = (clickInfo) => {
@@ -87,13 +90,19 @@ function Calendar() {
 	// };
 
 	// Delete event
-	const handleDelete = (eventId) => {
+	const handleDelete = async (eventId) => {
+		await deleteEvent(eventId);
 		setEvents(events.filter((event) => event._id !== eventId));
-		setEditingEvent(null); // Close the edit form
+		setEditingEvent(null);
 	};
+
 	// Handle form cancellation
 	const handleCancel = () => {
+		if (isNewEvent) {
+			setEvents(events.filter((event) => event.id !== editingEvent.id)); // Remove new event
+		}
 		setEditingEvent(null);
+		setIsNewEvent(false);
 	};
 
 	// add new events by double-clicking on date
@@ -104,6 +113,7 @@ function Calendar() {
 		// Check if last click was less than 300ms ago
 		if (currentTime - lastClickTime < 300) {
 			const newEvent = {
+				id: `temp-${events.length + 1}`, // Temporary id for new events
 				title: "New Event",
 				start: dateClickInfo.dateStr,
 				end: new Date(dateClickInfo.dateStr).setHours(
@@ -111,37 +121,44 @@ function Calendar() {
 				),
 			};
 			setEvents([...events, newEvent]);
+			setEditingEvent(newEvent);
+			setIsNewEvent(true); // Mark as new event
 		}
 
 		lastClickTime = currentTime; // Update last click time
 	};
 
 	return (
-		<div>
-			<FullCalendar
-				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-				initialView="dayGridMonth" // Default view
-				events={events} // Events to display
-				dateClick={handleDateClick} // Action on date click
-				eventClick={handleEventClick} // Action on event click
-				editable={true} // Enable drag-and-drop
-				selectable={true} // Enable date selection
-				headerToolbar={{
-					// Customize header
-					left: "prev,next today",
-					center: "title",
-					right: "dayGridMonth,timeGridWeek,timeGridDay",
-				}}
-			/>
-			{/* conditional render editing form */}
-			{editingEvent && (
-				<EventForm
-					event={editingEvent}
-					onSubmit={handleFormSubmit}
-					onDelete={handleDelete}
-					onCancel={handleCancel}
+		<div className="main-section">
+			<div className="calendar-section">
+				<FullCalendar
+					plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+					initialView="dayGridMonth" // Default view
+					events={events} // Events to display
+					dateClick={handleDateClick} // Action on date click
+					eventClick={handleEventClick} // Action on event click
+					editable={true} // Enable drag-and-drop
+					selectable={true} // Enable date selection
+					headerToolbar={{
+						// Customize header
+						left: "prev,next today",
+						center: "title",
+						right: "dayGridMonth,timeGridWeek,timeGridDay",
+					}}
 				/>
-			)}
+				{editingEvent && (
+					<div className="form-overlay">
+						<div className="form-container">
+							<EventForm
+								event={editingEvent}
+								onSubmit={handleFormSubmit}
+								onDelete={() => handleDelete(editingEvent.id)}
+								onCancel={handleCancel}
+							/>
+						</div>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }
