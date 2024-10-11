@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid"; // Import uuid
 import FullCalendar from "@fullcalendar/react"; // FullCalendar component
 import dayGridPlugin from "@fullcalendar/daygrid"; // For month view
 import timeGridPlugin from "@fullcalendar/timegrid"; // For week and day views
@@ -51,6 +52,11 @@ function Calendar() {
 		const eventToEdit = events.find(
 			(event) => event.id === clickInfo.event.id // FullCalendar Use 'id'
 		);
+		console.log("Clicked Event:", clickInfo.event); // Logs the clicked event object
+		console.log("Title:", clickInfo.event.title);
+		console.log("Start Date:", clickInfo.event.start);
+		console.log("End Date:", clickInfo.event.end);
+		console.log("ID:", clickInfo.event.id);
 		setEditingEvent(eventToEdit);
 		setIsNewEvent(false); // Not a new event
 	};
@@ -66,18 +72,14 @@ function Calendar() {
 
 	// Handle form submission
 	const handleFormSubmit = async (updatedEvent) => {
-		if (editingEvent && editingEvent._id) {
-			await updateEvent(editingEvent._id, updatedEvent); // MongoDB _id for updates
+		if (editingEvent && editingEvent.id) {
+			await updateEvent(editingEvent.id, updatedEvent);
 		} else {
 			await createEvent(updatedEvent);
 		}
 		const fetchedEvents = await getEvents();
-		// Map _id to id again after updating/creating
-		const mappedEvents = fetchedEvents.map((event) => ({
-			...event,
-			id: event._id,
-		}));
-		setEvents(mappedEvents);
+
+		setEvents(fetchedEvents);
 		setEditingEvent(null);
 		setEditingEvent(null);
 	};
@@ -92,10 +94,10 @@ function Calendar() {
 
 	// Delete event
 	const handleDelete = async (eventId) => {
-		if (editingEvent && editingEvent._id) {
-			await deleteEvent(editingEvent._id); // Use _id for deletion
+		if (editingEvent && editingEvent.id) {
+			await deleteEvent(editingEvent.id); // Use event.id for deletion
 		}
-		setEvents(events.filter((event) => event._id !== editingEvent._id));
+		setEvents(events.filter((event) => event.id !== editingEvent.id));
 		setEditingEvent(null);
 	};
 
@@ -116,19 +118,39 @@ function Calendar() {
 		// Check if last click was less than 300ms ago
 		if (currentTime - lastClickTime < 300) {
 			const newEvent = {
-				id: `temp-${events.length + 1}`, // Temporary id for new events
+				id: uuidv4(), // generate id for new events
 				title: "New Event",
 				start: dateClickInfo.dateStr,
 				end: new Date(dateClickInfo.dateStr).setHours(
 					new Date(dateClickInfo.dateStr).getHours() + 1
 				),
 			};
+
+			console.log("New Event Object:", newEvent);
+			console.log("Start:", newEvent.start);
+			console.log("End:", newEvent.end);
+			console.log("Title:", newEvent.title);
 			setEvents([...events, newEvent]);
 			setEditingEvent(newEvent);
 			setIsNewEvent(true); // Mark as new event
 		}
 
 		lastClickTime = currentTime; // Update last click time
+	};
+
+	// Handle event drop or resize
+	const handleEventChange = (changedEvent) => {
+		setEvents(
+			events.map((event) =>
+				event.id === changedEvent.event.id
+					? {
+							...event,
+							start: changedEvent.event.start,
+							end: changedEvent.event.end,
+					  }
+					: event
+			)
+		);
 	};
 
 	return (
@@ -142,6 +164,7 @@ function Calendar() {
 					eventClick={handleEventClick} // Action on event click
 					editable={true} // Enable drag-and-drop
 					selectable={true} // Enable date selection
+					eventChange={handleEventChange} // Handle drag-and-drop or resize changes
 					headerToolbar={{
 						// Customize header
 						left: "prev,next today",

@@ -8,7 +8,7 @@ const EventForm = ({ event, onSubmit, onDelete, onCancel }) => {
 		onSubmit({ ...event, title });
 	};
 	const handleDelete = () => {
-		onDelete(event._id); // Call the delete function with the event id
+		onDelete(event.id); // Call the delete function with the event id
 	};
 
 	return (
