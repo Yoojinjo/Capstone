@@ -56,8 +56,8 @@ app.put("/events/:id", async (req, res) => {
 	const { title, start, end } = req.body;
 
 	try {
-		const updatedEvent = await Event.findByIdAndUpdate(
-			id,
+		const updatedEvent = await Event.findOneAndUpdate(
+			{ id: id }, // Match by 'id' (UUID)
 			{ title, start, end },
 			{ new: true }
 		);
