@@ -15,7 +15,7 @@ function Calendar() {
 	const [editingEvent, setEditingEvent] = useState(null);
 	// Track if the event is new
 	const [isNewEvent, setIsNewEvent] = useState(false);
-
+	let lastClickTime = 0;
 	// Fetch events on component mount
 	useEffect(() => {
 		const fetchEvents = async () => {
@@ -27,18 +27,19 @@ function Calendar() {
 		fetchEvents();
 	}, []);
 
-	// Handle event click
+	// Handle event click double-click
 	const handleEventClick = (clickInfo) => {
-		const eventToEdit = events.find(
-			(event) => event.id === clickInfo.event.id // FullCalendar Use 'id'
-		);
-		console.log("Clicked Event:", clickInfo.event); // Logs the clicked event object
-		console.log("Title:", clickInfo.event.title);
-		console.log("Start Date:", clickInfo.event.start);
-		console.log("End Date:", clickInfo.event.end);
-		console.log("ID:", clickInfo.event.id);
-		setEditingEvent(eventToEdit);
-		setIsNewEvent(false); // Not a new event
+		const currentTime = new Date().getTime();
+		// Check if last click was less than 300ms ago (for double-click detection)
+		if (currentTime - lastClickTime < 300) {
+			const eventToEdit = events.find(
+				(event) => event.id === clickInfo.event.id // FullCalendar Use 'id'
+			);
+			console.log("Double Clicked Event:", clickInfo.event);
+			setEditingEvent(eventToEdit);
+			setIsNewEvent(false); // Not a new event
+		}
+		lastClickTime = currentTime; // Update last click time
 	};
 
 	// Handle form submission
@@ -78,7 +79,6 @@ function Calendar() {
 	};
 
 	// add new events by double-clicking on date
-	let lastClickTime = 0;
 
 	const handleDateClick = (dateClickInfo) => {
 		const currentTime = new Date().getTime();
@@ -108,18 +108,25 @@ function Calendar() {
 	};
 
 	// Handle event drop or resize
-	const handleEventChange = (changedEvent) => {
-		setEvents(
-			events.map((event) =>
-				event.id === changedEvent.event.id
-					? {
-							...event,
-							start: changedEvent.event.start,
-							end: changedEvent.event.end,
-					  }
-					: event
-			)
-		);
+	const handleEventChange = async (changedEvent) => {
+		const updatedEvent = {
+			...changedEvent.event,
+			start: changedEvent.event.start.toISOString(), //make date format consistent
+			end: changedEvent.event.end
+				? changedEvent.event.end.toISOString()
+				: null,
+		};
+
+		try {
+			await updateEvent(changedEvent.event.id, updatedEvent);
+			setEvents((prevEvents) =>
+				prevEvents.map((event) =>
+					event.id === changedEvent.event.id ? updatedEvent : event
+				)
+			);
+		} catch (error) {
+			console.error("Error updating event:", error);
+		}
 	};
 
 	return (
