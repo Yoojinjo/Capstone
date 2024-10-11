@@ -36,21 +36,17 @@ app.get("/events", async (req, res) => {
 	}
 });
 
-// Create a new event
+// POST /events - Create a new event
 app.post("/events", async (req, res) => {
-	const { title, start, end } = req.body;
-
-	const newEvent = new Event({
-		title,
-		start: new Date(start),
-		end: new Date(end),
-	});
+	const { id, title, start, end } = req.body;
 
 	try {
-		await newEvent.save();
+		const newEvent = new Event({ id, title, start, end }); // id provided by the client
+		await newEvent.save(); // Save to MongoDB
 		res.status(201).json(newEvent);
 	} catch (error) {
-		res.status(500).send("Error creating event");
+		console.error("Error saving event:", error);
+		res.status(500).json({ error: error.message });
 	}
 });
 

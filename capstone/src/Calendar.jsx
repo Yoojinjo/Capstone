@@ -20,12 +20,8 @@ function Calendar() {
 	useEffect(() => {
 		const fetchEvents = async () => {
 			const fetchedEvents = await getEvents();
-			// Map MongoDB's _id to FullCalendar's id
-			const mappedEvents = fetchedEvents.map((event) => ({
-				...event,
-				id: event._id, // FullCalendar expects 'id', map _id to id
-			}));
-			setEvents(mappedEvents);
+
+			setEvents(fetchedEvents);
 		};
 
 		fetchEvents();
@@ -72,16 +68,20 @@ function Calendar() {
 
 	// Handle form submission
 	const handleFormSubmit = async (updatedEvent) => {
-		if (editingEvent && editingEvent.id) {
-			await updateEvent(editingEvent.id, updatedEvent);
-		} else {
+		console.log("Submitting Event:", updatedEvent);
+		if (isNewEvent) {
+			//create new event
 			await createEvent(updatedEvent);
+		} else if (editingEvent && editingEvent.id) {
+			// Update existing event
+			await updateEvent(editingEvent.id, updatedEvent);
 		}
-		const fetchedEvents = await getEvents();
 
+		const fetchedEvents = await getEvents();
 		setEvents(fetchedEvents);
+		//reset states
 		setEditingEvent(null);
-		setEditingEvent(null);
+		setIsNewEvent(false);
 	};
 
 	// const handleFormSubmit = (updatedEvent) => {
@@ -93,7 +93,7 @@ function Calendar() {
 	// };
 
 	// Delete event
-	const handleDelete = async (eventId) => {
+	const handleDelete = async () => {
 		if (editingEvent && editingEvent.id) {
 			await deleteEvent(editingEvent.id); // Use event.id for deletion
 		}
@@ -117,19 +117,21 @@ function Calendar() {
 		const currentTime = new Date().getTime();
 		// Check if last click was less than 300ms ago
 		if (currentTime - lastClickTime < 300) {
+			const startDate = new Date(dateClickInfo.dateStr + "T00:00:00"); // Get the clicked date
+			const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour later
+
 			const newEvent = {
 				id: uuidv4(), // generate id for new events
 				title: "New Event",
-				start: dateClickInfo.dateStr,
-				end: new Date(dateClickInfo.dateStr).setHours(
-					new Date(dateClickInfo.dateStr).getHours() + 1
-				),
+				start: startDate.toISOString(),
+				end: endDate.toISOString(),
 			};
 
 			console.log("New Event Object:", newEvent);
 			console.log("Start:", newEvent.start);
 			console.log("End:", newEvent.end);
 			console.log("Title:", newEvent.title);
+
 			setEvents([...events, newEvent]);
 			setEditingEvent(newEvent);
 			setIsNewEvent(true); // Mark as new event
@@ -165,6 +167,7 @@ function Calendar() {
 					editable={true} // Enable drag-and-drop
 					selectable={true} // Enable date selection
 					eventChange={handleEventChange} // Handle drag-and-drop or resize changes
+					timeZone="local"
 					headerToolbar={{
 						// Customize header
 						left: "prev,next today",

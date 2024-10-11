@@ -5,8 +5,9 @@ const EventForm = ({ event, onSubmit, onDelete, onCancel }) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		onSubmit({ ...event, title });
+		onSubmit({ ...event, title, start: event.start, end: event.end });
 	};
+
 	const handleDelete = () => {
 		onDelete(event.id); // Call the delete function with the event id
 	};
