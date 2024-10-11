@@ -27,22 +27,6 @@ function Calendar() {
 		fetchEvents();
 	}, []);
 
-	//	Hardcoded initial testing Placeholder
-	// const [events, setEvents] = useState([
-	// 	{
-	// 		id: "1", // Add an id for the event
-	// 		title: "Tomato: Start Seeds",
-	// 		start: "2024-10-15T10:00:00",
-	// 		end: "2024-10-15T11:00:00",
-	// 	},
-	// 	{
-	// 		id: "2",
-	// 		title: "Tomato: Transplant",
-	// 		start: "2024-10-16T12:00:00",
-	// 		end: "2024-10-16T13:00:00",
-	// 	},
-	// ]);
-
 	// Handle event click
 	const handleEventClick = (clickInfo) => {
 		const eventToEdit = events.find(
@@ -56,15 +40,6 @@ function Calendar() {
 		setEditingEvent(eventToEdit);
 		setIsNewEvent(false); // Not a new event
 	};
-	// change code to work with MONGODB id
-	// const handleEventClick = (clickInfo) => {
-	// 	console.log("Clicked Event:", clickInfo.event);
-	// 	const eventToEdit = events.find(
-	// 		(event) => event.id === clickInfo.event.id
-	// 	); // convert the FullCalendar event object back to state format
-	// 	console.log("Event to Edit:", eventToEdit);
-	// 	setEditingEvent(eventToEdit); // Set the selected event to be edited
-	// };
 
 	// Handle form submission
 	const handleFormSubmit = async (updatedEvent) => {
@@ -83,14 +58,6 @@ function Calendar() {
 		setEditingEvent(null);
 		setIsNewEvent(false);
 	};
-
-	// const handleFormSubmit = (updatedEvent) => {
-	// 	const updatedEvents = events.map((event) =>
-	// 		event.id === updatedEvent.id ? updatedEvent : event
-	// 	);
-	// 	setEvents(updatedEvents);
-	// 	setEditingEvent(null); // Close the form
-	// };
 
 	// Delete event
 	const handleDelete = async () => {
@@ -181,7 +148,7 @@ function Calendar() {
 							<EventForm
 								event={editingEvent}
 								onSubmit={handleFormSubmit}
-								onDelete={() => handleDelete(editingEvent.id)}
+								onDelete={handleDelete}
 								onCancel={handleCancel}
 							/>
 						</div>
