@@ -5,6 +5,8 @@ import timeGridPlugin from "@fullcalendar/timegrid/index.js"; // Week and day vi
 import interactionPlugin from "@fullcalendar/interaction/index.js"; // Drag and drop, selectable
 import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
 import "./Calendar.css";
+import Directions from "./Directions";
+import EventForm from "./EventForm";
 
 function Calendar() {
 	// Initial events state
@@ -86,6 +88,12 @@ function Calendar() {
 		setEditingEvent((prev) => ({ ...prev, [name]: value }));
 	};
 
+	// Handle form cancel
+	const handleCancel = () => {
+		setEditingEvent(null); // Close the form
+		setDirectionsVisible(true); // Show directions again
+	};
+
 	return (
 		<div className="calendar-container">
 			<div className="calendar">
@@ -110,55 +118,14 @@ function Calendar() {
 			{/* Conditional rendering for direction or the event editing form */}
 			<div className="info-section">
 				{directionsVisible ? (
-					<div className="directions">
-						<h3>Directions:</h3>
-						<p>Click on a date to create a new event.</p>
-						<p>Click on an existing event to edit it.</p>
-						<p>Fill in the form to update event details.</p>
-					</div>
+					<Directions />
 				) : (
-					<div className="edit-event-modal">
-						<h3>Edit Event</h3>
-						<form onSubmit={handleFormSubmit}>
-							<div>
-								<label>Title:</label>
-								<input
-									type="text"
-									name="title"
-									value={editingEvent.title}
-									onChange={handleInputChange}
-								/>
-							</div>
-							<div>
-								<label>Start:</label>
-								<input
-									type="datetime-local"
-									name="start"
-									value={editingEvent.start.replace("Z", "")} // Remove 'Z' for local time
-									onChange={handleInputChange}
-								/>
-							</div>
-							<div>
-								<label>End:</label>
-								<input
-									type="datetime-local"
-									name="end"
-									value={editingEvent.end.replace("Z", "")} // Remove 'Z' for local time
-									onChange={handleInputChange}
-								/>
-							</div>
-							<button type="submit">Save Changes</button>
-							<button
-								type="button"
-								onClick={() => {
-									setEditingEvent(null); // Close the form
-									setDirectionsVisible(true); // Show directions again
-								}}
-							>
-								Cancel
-							</button>
-						</form>
-					</div>
+					<EventForm
+						editingEvent={editingEvent}
+						handleInputChange={handleInputChange}
+						handleFormSubmit={handleFormSubmit}
+						handleCancel={handleCancel}
+					/>
 				)}
 			</div>
 		</div>

@@ -1,37 +1,51 @@
-import React, { useState } from "react";
-
-const EventForm = ({ event, onSubmit, onDelete, onCancel }) => {
-	const [title, setTitle] = useState(event.title);
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		onSubmit({ ...event, title, start: event.start, end: event.end });
-	};
-
-	const handleDelete = () => {
-		onDelete(event.id); // Call the delete function with the event id
-	};
-
+function EventForm({
+	editingEvent,
+	handleInputChange,
+	handleFormSubmit,
+	handleCancel,
+}) {
 	return (
-		<form onSubmit={handleSubmit}>
-			<div>
-				<label>Title:</label>
-				<input
-					type="text"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
-					required
-				/>
-			</div>
-			<button type="submit">Save</button>{" "}
-			<button type="button" onClick={handleDelete}>
-				Delete Event
-			</button>
-			<button type="button" onClick={onCancel}>
-				Cancel
-			</button>
-		</form>
+		<div className="edit-event-modal">
+			<h3>Edit Event</h3>
+			<form onSubmit={handleFormSubmit}>
+				<div>
+					<label>Title:</label>
+					<input
+						type="text"
+						name="title"
+						value={editingEvent.title || ""}
+						onChange={handleInputChange}
+					/>
+				</div>
+				<div>
+					<label>Start:</label>
+					<input
+						type="datetime-local"
+						name="start"
+						value={
+							editingEvent.start
+								? editingEvent.start.replace("Z", "")
+								: ""
+						} // Remove 'Z' for local time
+						onChange={handleInputChange}
+					/>
+				</div>
+				<div>
+					<label>End:</label>
+					<input
+						type="datetime-local"
+						name="end"
+						value={editingEvent.end.replace("Z", "")} // Remove 'Z' for local time
+						onChange={handleInputChange}
+					/>
+				</div>
+				<button type="submit">Save Changes</button>
+				<button type="button" onClick={handleCancel}>
+					Cancel
+				</button>
+			</form>
+		</div>
 	);
-};
+}
 
 export default EventForm;
