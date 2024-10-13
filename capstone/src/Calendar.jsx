@@ -44,20 +44,22 @@ function Calendar() {
 	};
 
 	// Handle event drop/resize (when events are dragged or resized)
-	const handleEventChange = (changeInfo) => {
-		const updatedEvents = events.map((event) =>
-			event.id === changeInfo.event.id
-				? {
-						...event,
-						start: changeInfo.event.start.toISOString(),
-						end: changeInfo.event.end
-							? changeInfo.event.end.toISOString()
-							: null,
-				  }
-				: event
-		);
+	const handleEventChange = async (changeInfo) => {
+		const updatedEvent = {
+			...changeInfo.event,
+			start: changeInfo.event.start.toISOString(),
+			end: changeInfo.event.end
+				? changeInfo.event.end.toISOString()
+				: null,
+		};
 
-		setEvents(updatedEvents);
+		// Update event in backend
+		await updateEvent(updatedEvent.id, updatedEvent);
+		setEvents(
+			events.map((event) =>
+				event.id === updatedEvent.id ? updatedEvent : event
+			)
+		);
 	};
 
 	// Handle event click (for further interactions like editing)
@@ -71,14 +73,17 @@ function Calendar() {
 	};
 
 	// Handle form submission to save changes
-	const handleFormSubmit = (e) => {
+	const handleFormSubmit = async (e) => {
 		e.preventDefault();
 		const updatedEvents = events.map((event) =>
 			event.id === editingEvent.id ? editingEvent : event
 		);
-		setEvents(updatedEvents); // Update event list
-		setEditingEvent(null); // Close the form
-		setDirectionsVisible(true); // Show directions again after saving
+
+		// Update the event in the backend
+		await updateEvent(editingEvent.id, editingEvent);
+		setEvents(updatedEvents);
+		setEditingEvent(null);
+		setDirectionsVisible(true);
 	};
 
 	// Handle form input changes
@@ -94,8 +99,9 @@ function Calendar() {
 	};
 
 	// delete event
-	const handleDelete = () => {
-		setEvents(events.filter((event) => event.id !== editingEvent.id)); // Remove the event from the events array
+	const handleDelete = async () => {
+		await deleteEvent(editingEvent.id);
+		setEvents(events.filter((event) => event.id !== editingEvent.id));
 		setEditingEvent(null);
 		setDirectionsVisible(true);
 	};
