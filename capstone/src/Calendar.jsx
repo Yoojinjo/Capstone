@@ -46,17 +46,18 @@ function Calendar() {
 	// Handle event drop/resize (when events are dragged or resized)
 	const handleEventChange = async (changeInfo) => {
 		const updatedEvent = {
-			...changeInfo.event,
-			start: changeInfo.event.start.toISOString(),
+			id: changeInfo.event.id, // Use the event's unique ID
+			title: changeInfo.event.title,
+			start: changeInfo.event.start.toISOString(), // Ensure start time is in ISO format
 			end: changeInfo.event.end
 				? changeInfo.event.end.toISOString()
-				: null,
+				: null, // Ensure end time is in ISO format
 		};
 
 		// Update event in backend
 		await updateEvent(updatedEvent.id, updatedEvent);
-		setEvents(
-			events.map((event) =>
+		setEvents((prevEvents) =>
+			prevEvents.map((event) =>
 				event.id === updatedEvent.id ? updatedEvent : event
 			)
 		);
