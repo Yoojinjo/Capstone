@@ -3,6 +3,7 @@ function EventForm({
 	handleInputChange,
 	handleFormSubmit,
 	handleCancel,
+	handleDelete,
 }) {
 	return (
 		<div className="edit-event-modal">
@@ -42,6 +43,13 @@ function EventForm({
 				<button type="submit">Save Changes</button>
 				<button type="button" onClick={handleCancel}>
 					Cancel
+				</button>
+				<button
+					type="button"
+					onClick={handleDelete}
+					className="delete-button"
+				>
+					Delete Event
 				</button>
 			</form>
 		</div>

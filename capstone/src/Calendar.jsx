@@ -94,6 +94,13 @@ function Calendar() {
 		setDirectionsVisible(true); // Show directions again
 	};
 
+	// delete event
+	const handleDelete = () => {
+		setEvents(events.filter((event) => event.id !== editingEvent.id)); // Remove the event from the events array
+		setEditingEvent(null);
+		setDirectionsVisible(true);
+	};
+
 	return (
 		<div className="calendar-container">
 			<div className="calendar">
@@ -125,6 +132,7 @@ function Calendar() {
 						handleInputChange={handleInputChange}
 						handleFormSubmit={handleFormSubmit}
 						handleCancel={handleCancel}
+						handleDelete={handleDelete}
 					/>
 				)}
 			</div>
