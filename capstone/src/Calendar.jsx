@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid/index.js"; // Month view
 import timeGridPlugin from "@fullcalendar/timegrid/index.js"; // Week and day views
 import interactionPlugin from "@fullcalendar/interaction/index.js"; // Drag and drop, selectable
 import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
+import "./Calendar.css";
 
 function Calendar() {
 	// Initial events state
@@ -19,6 +20,9 @@ function Calendar() {
 
 	// State to manage the currently editing event
 	const [editingEvent, setEditingEvent] = useState(null);
+
+	// State for directions
+	const [directionsVisible, setDirectionsVisible] = useState(true);
 
 	// Handle date click (for creating new events)
 	const handleDateClick = (dateClickInfo) => {
@@ -60,7 +64,9 @@ function Calendar() {
 		const clickedEvent = events.find(
 			(event) => event.id === clickInfo.event.id
 		);
-		setEditingEvent(clickedEvent); // Set the event to be edited
+		console.log("Clicked Event:", clickedEvent);
+		setEditingEvent(clickedEvent);
+		setDirectionsVisible(false); // Hide directions when editing
 	};
 
 	// Handle form submission to save changes
@@ -71,6 +77,7 @@ function Calendar() {
 		);
 		setEvents(updatedEvents); // Update event list
 		setEditingEvent(null); // Close the form
+		setDirectionsVisible(true); // Show directions again after saving
 	};
 
 	// Handle form input changes
@@ -81,65 +88,76 @@ function Calendar() {
 
 	return (
 		<div className="calendar-container">
-			<FullCalendar
-				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-				initialView="dayGridMonth" // Default view: month
-				events={events} // Display events
-				dateClick={handleDateClick} // Click on a date to add a new event
-				eventClick={handleEventClick} // Click on an event to trigger an action
-				editable={true} // Allow event drag-and-drop
-				eventChange={handleEventChange} // Handle event updates
-				selectable={true} // Allow date range selection
-				headerToolbar={{
-					left: "prev,next today",
-					center: "title",
-					right: "dayGridMonth,timeGridWeek,timeGridDay",
-				}} // Customize header buttons
-				height="auto" // Adjust calendar height to fit content
-			/>
+			<div className="calendar">
+				<FullCalendar
+					plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+					initialView="dayGridMonth" // Default view: month
+					events={events} // Display events
+					dateClick={handleDateClick} // Click on a date to add a new event
+					eventClick={handleEventClick} // Click on an event to trigger an action
+					editable={true} // Allow event drag-and-drop
+					eventChange={handleEventChange} // Handle event updates
+					selectable={true} // Allow date range selection
+					headerToolbar={{
+						left: "prev,next today",
+						center: "title",
+						right: "dayGridMonth,timeGridWeek,timeGridDay",
+					}} // Customize header buttons
+					height="auto" // Adjust calendar height to fit content
+				/>
+			</div>
 
-			{/* Conditional rendering for the event editing form */}
-			{editingEvent && (
-				<div className="edit-event-modal">
-					<h3>Edit Event</h3>
-					<form onSubmit={handleFormSubmit}>
-						<div>
-							<label>Title:</label>
-							<input
-								type="text"
-								name="title"
-								value={editingEvent.title}
-								onChange={handleInputChange}
-							/>
-						</div>
-						<div>
-							<label>Start:</label>
-							<input
-								type="datetime-local"
-								name="start"
-								value={editingEvent.start.replace("Z", "")} // Remove 'Z' for local time
-								onChange={handleInputChange}
-							/>
-						</div>
-						<div>
-							<label>End:</label>
-							<input
-								type="datetime-local"
-								name="end"
-								value={editingEvent.end.replace("Z", "")} // Remove 'Z' for local time
-								onChange={handleInputChange}
-							/>
-						</div>
-						<button type="submit">Save Changes</button>
-						<button
-							type="button"
-							onClick={() => setEditingEvent(null)}
-						>
-							Cancel
-						</button>
-					</form>
-				</div>
-			)}
+			{/* Conditional rendering for direction or the event editing form */}
+			<div className="info-section">
+				{directionsVisible ? (
+					<div className="directions">
+						<h3>Directions:</h3>
+						<p>Click on a date to create a new event.</p>
+						<p>Click on an existing event to edit it.</p>
+						<p>Fill in the form to update event details.</p>
+					</div>
+				) : (
+					<div className="edit-event-modal">
+						<h3>Edit Event</h3>
+						<form onSubmit={handleFormSubmit}>
+							<div>
+								<label>Title:</label>
+								<input
+									type="text"
+									name="title"
+									value={editingEvent.title}
+									onChange={handleInputChange}
+								/>
+							</div>
+							<div>
+								<label>Start:</label>
+								<input
+									type="datetime-local"
+									name="start"
+									value={editingEvent.start.replace("Z", "")} // Remove 'Z' for local time
+									onChange={handleInputChange}
+								/>
+							</div>
+							<div>
+								<label>End:</label>
+								<input
+									type="datetime-local"
+									name="end"
+									value={editingEvent.end.replace("Z", "")} // Remove 'Z' for local time
+									onChange={handleInputChange}
+								/>
+							</div>
+							<button type="submit">Save Changes</button>
+							<button
+								type="button"
+								onClick={() => setEditingEvent(null)}
+							>
+								Cancel
+							</button>
+						</form>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

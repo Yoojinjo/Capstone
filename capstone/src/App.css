@@ -1,29 +1,38 @@
-.main-section {
-	display: flex;
-	position: relative;
+.calendar-container {
+	display: flex; /* Use Flexbox for layout */
+	margin: 20px; /* Optional: Add some margin around the container */
 }
 
-.calendar-section {
-	width: 100%;
-	position: relative;
+.calendar {
+	flex: 1; /* Make the calendar take the available space */
+	margin-right: 20px; /* Add space between the calendar and the info section */
 }
-
-.form-overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5); /* dim background */
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.form-container {
-	background-color: white;
+.info-section {
+	width: 25%;
 	padding: 20px;
-	border-radius: 8px;
-	width: 300px;
-	z-index: 1000;
+	border-left: 1px solid #ccc; /* Optional: visual separation */
+}
+.edit-event-modal {
+	width: 300px; /* Set a fixed width for the info section */
+	background-color: #f9f9f9; /* Background color for visibility */
+	border: 1px solid #ccc; /* Border around the section */
+	padding: 10px; /* Padding for inner spacing */
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.edit-event-modal h3 {
+	margin: 0 0 10px; /* Margin for the heading */
+}
+
+.edit-event-modal form {
+	display: flex; /* Flexbox for form layout */
+	flex-direction: column; /* Stack inputs vertically */
+}
+
+.edit-event-modal label {
+	margin-bottom: 5px; /* Spacing between label and input */
+}
+
+.edit-event-modal input {
+	margin-bottom: 10px; /* Spacing between inputs */
 }
