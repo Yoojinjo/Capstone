@@ -38,11 +38,11 @@ app.get("/events", async (req, res) => {
 
 // POST /events - Create a new event
 app.post("/events", async (req, res) => {
-	const { id, title, start, end } = req.body;
+	const { id, title, start, end, editable } = req.body;
 
 	try {
-		const newEvent = new Event({ id, title, start, end }); // id provided by the client
-		await newEvent.save(); // Save to MongoDB
+		const newEvent = new Event({ id, title, start, end, editable });
+		await newEvent.save();
 		res.status(201).json(newEvent);
 	} catch (error) {
 		console.error("Error saving event:", error);
@@ -53,13 +53,13 @@ app.post("/events", async (req, res) => {
 // Update an event
 app.put("/events/:id", async (req, res) => {
 	const { id } = req.params;
-	const { title, start, end } = req.body;
+	const { title, start, end, editable } = req.body;
 
 	try {
 		const updatedEvent = await Event.findOneAndUpdate(
 			{ id: id }, // Match by 'id' (UUID)
-			{ title, start, end },
-			{ new: true }
+			{ title, start, end, editable },
+			{ new: true } // Return the updated document
 		);
 		res.json(updatedEvent);
 	} catch (error) {

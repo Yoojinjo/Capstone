@@ -18,6 +18,10 @@ const eventSchema = new mongoose.Schema({
 		type: Date,
 		required: true,
 	},
+	editable: {
+		type: Boolean,
+		default: true,
+	},
 });
 const Event = mongoose.model("Event", eventSchema);
 export default Event;
