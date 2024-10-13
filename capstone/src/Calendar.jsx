@@ -150,7 +150,10 @@ function Calendar() {
 							<button type="submit">Save Changes</button>
 							<button
 								type="button"
-								onClick={() => setEditingEvent(null)}
+								onClick={() => {
+									setEditingEvent(null); // Close the form
+									setDirectionsVisible(true); // Show directions again
+								}}
 							>
 								Cancel
 							</button>
