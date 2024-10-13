@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react"; // Import FullCalendar
 import dayGridPlugin from "@fullcalendar/daygrid/index.js"; // Month view
 import timeGridPlugin from "@fullcalendar/timegrid/index.js"; // Week and day views
@@ -7,24 +7,22 @@ import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
 import "./Calendar.css";
 import Directions from "./Directions";
 import EventForm from "./EventForm";
+import { getEvents, createEvent, updateEvent, deleteEvent } from "./api";
 
 function Calendar() {
-	// Initial events state
-	const [events, setEvents] = useState([
-		{
-			id: uuidv4(),
-			title: "Initial Event",
-			start: new Date().toISOString(), // Set current time as start
-			end: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(), // End 1 hour later
-			editable: true,
-		},
-	]);
-
-	// State to manage the currently editing event
+	const [events, setEvents] = useState([]);
 	const [editingEvent, setEditingEvent] = useState(null);
-
-	// State for directions
 	const [directionsVisible, setDirectionsVisible] = useState(true);
+
+	// Fetch events from the backend on component mount
+	useEffect(() => {
+		const fetchEvents = async () => {
+			const fetchedEvents = await getEvents();
+			setEvents(fetchedEvents);
+		};
+
+		fetchEvents();
+	}, []);
 
 	// Handle date click (for creating new events)
 	const handleDateClick = (dateClickInfo) => {
