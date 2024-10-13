@@ -25,10 +25,9 @@ function Calendar() {
 	}, []);
 
 	// Handle date click (for creating new events)
-	const handleDateClick = (dateClickInfo) => {
+	const handleDateClick = async (dateClickInfo) => {
 		// Create a Date object representing 8 AM UTC on the clicked date
 		const selectedDate = new Date(dateClickInfo.dateStr + "T08:00:00Z"); // Use UTC time
-
 		const newEvent = {
 			id: uuidv4(),
 			title: "New Event",
@@ -39,7 +38,9 @@ function Calendar() {
 			editable: true, // Allow event to be dragged or resized
 		};
 
-		setEvents([...events, newEvent]);
+		// Create event in backend
+		const createdEvent = await createEvent(newEvent);
+		setEvents([...events, createdEvent]);
 	};
 
 	// Handle event drop/resize (when events are dragged or resized)
