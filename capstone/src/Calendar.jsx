@@ -22,13 +22,16 @@ function Calendar() {
 
 	// Handle date click (for creating new events)
 	const handleDateClick = (dateClickInfo) => {
+		// Create a Date object representing 8 AM UTC on the clicked date
+		const selectedDate = new Date(dateClickInfo.dateStr + "T08:00:00Z"); // Use UTC time
+
 		const newEvent = {
 			id: uuidv4(),
 			title: "New Event",
-			start: dateClickInfo.dateStr,
+			start: selectedDate.toISOString(), // Start time in UTC
 			end: new Date(
-				new Date(dateClickInfo.dateStr).getTime() + 60 * 60 * 1000
-			).toISOString(), // 1 hour later
+				selectedDate.getTime() + 60 * 60 * 1000
+			).toISOString(), // End 1 hour later
 			editable: true, // Allow event to be dragged or resized
 		};
 
