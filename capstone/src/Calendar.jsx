@@ -25,7 +25,7 @@ function Calendar() {
 		const newEvent = {
 			id: uuidv4(),
 			title: "New Event",
-			start: dateClickInfo.dateStr,
+			start: new Date(dateClickInfo.dateStr).toISOString(),
 			end: new Date(
 				new Date(dateClickInfo.dateStr).getTime() + 60 * 60 * 1000
 			).toISOString(), // 1 hour later
