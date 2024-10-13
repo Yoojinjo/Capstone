@@ -14,6 +14,8 @@ export const createEvent = async (event) => {
 		title: event.title,
 		start: event.start,
 		end: event.end,
+		startEditable: true,
+		durationEditable: true,
 	});
 	return response.data;
 };

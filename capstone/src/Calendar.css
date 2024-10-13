@@ -1,0 +1,37 @@
+/* Style for calendar events */
+.fc-event {
+	background-color: rgb(47, 47, 206); /* Set the background color to blue */
+	border: none; /* Remove default border */
+	color: white; /* Set text color to white for better contrast */
+	padding: 5px; /* Add some padding */
+	border-radius: 4px; /* Slightly round the corners */
+	cursor: pointer; /* Change cursor to pointer */
+	transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+/* Optional: Change the hover effect */
+.fc-event:hover {
+	background-color: darkblue; /* Darker blue on hover */
+}
+
+/* Optional: Style for the selected event */
+.fc-event.fc-selected {
+	background-color: lightblue; /* Light blue for selected events */
+	border: 1px solid rgb(36, 36, 153); /* Border for selected events */
+	color: black; /* Change text color to black for better contrast */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+}
+
+/* Dragging effect */
+.fc-event.fc-dragging {
+	opacity: 0.7; /* Slightly transparent while dragging */
+	border: 2px dashed rgba(0, 0, 0, 0.5); /* Optional dashed border */
+}
+
+/* Ensure all-day events also have the same style */
+.fc-daygrid-event {
+	background-color: rgb(70, 70, 216); /* Set all-day events to blue */
+	border: none; /* Remove default border */
+	color: white; /* Set text color to white for better contrast */
+	border-radius: 4px; /* Optional: round the corners for consistency */
+}
