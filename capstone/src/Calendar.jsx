@@ -11,6 +11,7 @@ import { getEvents, createEvent, updateEvent, deleteEvent } from "./api";
 
 function Calendar() {
 	const [events, setEvents] = useState([]);
+	const [selectedDate, setSelectedDate] = useState(null);
 	const [editingEvent, setEditingEvent] = useState(null);
 	const [directionsVisible, setDirectionsVisible] = useState(true);
 
@@ -24,23 +25,87 @@ function Calendar() {
 		fetchEvents();
 	}, []);
 
-	// Handle date click (for creating new events)
-	const handleDateClick = async (dateClickInfo) => {
-		// Create a Date object representing 8 AM UTC on the clicked date
-		const selectedDate = new Date(dateClickInfo.dateStr + "T08:00:00Z"); // Use UTC time
-		const newEvent = {
+	// Handle date click (for selecting a transplant date)
+	const handleDateClick = (dateClickInfo) => {
+		// Update the selected date with the clicked date (in YYYY-MM-DD format)
+		const clickedDate = new Date(dateClickInfo.dateStr)
+			.toISOString()
+			.substring(0, 10);
+		setSelectedDate(clickedDate);
+	};
+
+	// Function to add the 'Tomato Transplant', 'Seed Start', and 'First Tomato Harvest' events
+	const handleAddEvents = async () => {
+		if (!selectedDate) {
+			alert("Please select a date for the Tomato Transplant event.");
+			return;
+		}
+
+		// Create a Date object for the transplant event at 8 AM UTC
+		const transplantDate = new Date(selectedDate + "T08:00:00Z");
+		const groupIdValue = uuidv4(); // Create a unique group ID for these events
+
+		// Create the 'Tomato Transplant' event
+		const transplantEvent = {
 			id: uuidv4(),
-			title: "New Event",
-			start: selectedDate.toISOString(), // Start time in UTC
+			groupId: groupIdValue,
+			title: "Transplant - Tomatoes",
+			start: transplantDate.toISOString(),
 			end: new Date(
-				selectedDate.getTime() + 60 * 60 * 1000
-			).toISOString(), // End 1 hour later
-			editable: true, // Allow event to be dragged or resized
+				transplantDate.getTime() + 24 * 60 * 60 * 1000
+			).toISOString(), // 1-hour event
+			editable: true,
 		};
 
-		// Create event in backend
-		const createdEvent = await createEvent(newEvent);
-		setEvents([...events, createdEvent]);
+		// Generate the 'Seed Start' event, 6 weeks (42 days) before the transplant
+		const seedStartDate = new Date(
+			transplantDate.getTime() - 42 * 24 * 60 * 60 * 1000
+		); // Subtract 6 weeks (42 days)
+		const seedStartEvent = {
+			id: uuidv4(),
+			groupId: groupIdValue,
+			title: "Seed Start - Tomatoes",
+			start: seedStartDate.toISOString(),
+			end: new Date(
+				seedStartDate.getTime() + 24 * 60 * 60 * 1000
+			).toISOString(), // 1-hour event
+			editable: true,
+		};
+
+		// Generate the 'First Tomato Harvest' event, 6 weeks (42 days) after the transplant
+		const harvestDate = new Date(
+			transplantDate.getTime() + 42 * 24 * 60 * 60 * 1000
+		); // Add 6 weeks (42 days)
+		const harvestEvent = {
+			id: uuidv4(),
+			groupId: groupIdValue,
+			title: "First Harvest - Tomatoes",
+			start: harvestDate.toISOString(),
+			end: new Date(
+				harvestDate.getTime() + 24 * 60 * 60 * 1000
+			).toISOString(), // 1-hour event
+			editable: true,
+		};
+
+		// Create events in backend
+		const createdTransplantEvent = await createEvent(transplantEvent);
+		const createdSeedStartEvent = await createEvent(seedStartEvent);
+		const createdHarvestEvent = await createEvent(harvestEvent);
+
+		// Update the events state with all three events
+		setEvents([
+			...events,
+			createdTransplantEvent,
+			createdSeedStartEvent,
+			createdHarvestEvent,
+		]);
+
+		alert("Events have been added to the calendar!");
+	};
+
+	// Set the selected date from the input
+	const handleDateChange = (e) => {
+		setSelectedDate(e.target.value);
 	};
 
 	// Handle event drop/resize (when events are dragged or resized)
@@ -107,40 +172,84 @@ function Calendar() {
 		setDirectionsVisible(true);
 	};
 
-	return (
-		<div className="calendar-container">
-			<div className="calendar">
-				<FullCalendar
-					plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-					initialView="dayGridMonth" // Default view: month
-					events={events} // Display events
-					dateClick={handleDateClick} // Click on a date to add a new event
-					eventClick={handleEventClick} // Click on an event to trigger an action
-					editable={true} // Allow event drag-and-drop
-					eventChange={handleEventChange} // Handle event updates
-					selectable={true} // Allow date range selection
-					headerToolbar={{
-						left: "prev,next today",
-						center: "title",
-						right: "dayGridMonth,timeGridWeek,timeGridDay",
-					}} // Customize header buttons
-					height="auto" // Adjust calendar height to fit content
-				/>
-			</div>
+	// // delete event and related events sharing the same groupId
+	// const handleDelete = async () => {
+	// 	if (!editingEvent) return; // Ensure there is an event to delete
 
-			{/* Conditional rendering for direction or the event editing form */}
-			<div className="info-section">
-				{directionsVisible ? (
-					<Directions />
-				) : (
-					<EventForm
-						editingEvent={editingEvent}
-						handleInputChange={handleInputChange}
-						handleFormSubmit={handleFormSubmit}
-						handleCancel={handleCancel}
-						handleDelete={handleDelete}
+	// 	const { groupId } = editingEvent;
+
+	// 	// Filter the events to get all events with the same groupId
+	// 	const eventsToDelete = events.filter(
+	// 		(event) => event.groupId === groupId
+	// 	);
+
+	// 	// Delete all events with the same groupId from the backend
+	// 	for (const event of eventsToDelete) {
+	// 		await deleteEvent(event.id); // Assuming deleteEvent is an async function for backend deletion
+	// 	}
+
+	// 	// Update the state by removing the deleted events
+	// 	setEvents(events.filter((event) => event.groupId !== groupId));
+
+	// 	// Clear the editing form and show directions again
+	// 	setEditingEvent(null);
+	// 	setDirectionsVisible(true);
+	// };
+	return (
+		<div>
+			{/* Date input and button to generate the events */}
+
+			<div className="event-controls">
+				<label>
+					Select Transplant Date:{" "}
+					<input
+						type="date"
+						value={selectedDate || ""}
+						onChange={handleDateChange}
 					/>
-				)}
+				</label>
+				<button onClick={handleAddEvents}>
+					Schedule Tomato Planting
+				</button>
+			</div>
+			<div className="calendar-container">
+				<div className="calendar">
+					<FullCalendar
+						plugins={[
+							dayGridPlugin,
+							timeGridPlugin,
+							interactionPlugin,
+						]}
+						initialView="dayGridMonth" // Default view: month
+						events={events} // Display events
+						dateClick={handleDateClick} // Click on a date to add a new event
+						eventClick={handleEventClick} // Click on an event to trigger an action
+						editable={true} // Allow event drag-and-drop
+						eventChange={handleEventChange} // Handle event updates
+						selectable={true} // Allow date range selection
+						headerToolbar={{
+							left: "prev,next today",
+							center: "title",
+							right: "dayGridMonth,timeGridWeek,timeGridDay",
+						}} // Customize header buttons
+						height="auto" // Adjust calendar height to fit content
+					/>
+				</div>
+
+				{/* Conditional rendering for directions or the event editing form */}
+				<div className="info-section">
+					{directionsVisible ? (
+						<Directions />
+					) : (
+						<EventForm
+							editingEvent={editingEvent}
+							handleInputChange={handleInputChange}
+							handleFormSubmit={handleFormSubmit}
+							handleCancel={handleCancel}
+							handleDelete={handleDelete}
+						/>
+					)}
+				</div>
 			</div>
 		</div>
 	);

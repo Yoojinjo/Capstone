@@ -11,6 +11,7 @@ export const getEvents = async () => {
 export const createEvent = async (event) => {
 	const response = await axios.post(`${API_URL}/events`, {
 		id: event.id,
+		groupId: event.groupId,
 		title: event.title,
 		start: event.start,
 		end: event.end,
