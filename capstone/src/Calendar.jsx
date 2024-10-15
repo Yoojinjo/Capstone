@@ -4,10 +4,11 @@ import dayGridPlugin from "@fullcalendar/daygrid/index.js"; // Month view
 import timeGridPlugin from "@fullcalendar/timegrid/index.js"; // Week and day views
 import interactionPlugin from "@fullcalendar/interaction/index.js"; // Drag and drop, selectable
 import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
-import "./Calendar.css";
+
 import Directions from "./Directions";
 import EventForm from "./EventForm";
 import { getEvents, createEvent, updateEvent, deleteEvent } from "./api";
+import "./Calendar.css";
 
 function Calendar() {
 	const [events, setEvents] = useState([]);
@@ -33,6 +34,16 @@ function Calendar() {
 			.substring(0, 10);
 		setSelectedDate(clickedDate);
 	};
+
+	const frostDates = [
+		{
+			start: "2024-10-14",
+			end: "2025-05-03",
+			display: "background",
+			backgroundColor: "darkblue", // Frost highlight color
+			borderColor: "transparent", // Optional: Remove border for background event
+		},
+	];
 
 	// Function to add the 'Tomato Transplant', 'Seed Start', and 'First Tomato Harvest' events
 	const handleAddEvents = async () => {
@@ -220,7 +231,7 @@ function Calendar() {
 							interactionPlugin,
 						]}
 						initialView="dayGridMonth" // Default view: month
-						events={events} // Display events
+						events={[...events, ...frostDates]} // Display events
 						dateClick={handleDateClick} // Click on a date to add a new event
 						eventClick={handleEventClick} // Click on an event to trigger an action
 						editable={true} // Allow event drag-and-drop
@@ -231,6 +242,7 @@ function Calendar() {
 							center: "title",
 							right: "dayGridMonth,timeGridWeek,timeGridDay",
 						}} // Customize header buttons
+						// dayCellDidMount={dayCellDidMount} //  custom class for frost dates
 						height="auto" // Adjust calendar height to fit content
 					/>
 				</div>
