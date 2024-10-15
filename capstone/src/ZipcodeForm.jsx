@@ -1,29 +1,31 @@
 import { useState } from "react";
 
-function ZipcodeForm() {
-	const [zipcode, setZipcode] = useState("");
+function ZipcodeForm({ setZipCode }) {
+	const [inputZipCode, setInputZipCode] = useState("");
 
-	const handleZipcodeSubmit = (e) => {
+	// Handle form submission
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		// Handle the submitted zipcode (e.g., validation or API call)
-		console.log("Submitted zipcode:", zipcode);
+		setZipCode(inputZipCode); // Pass the zip code back to App
 	};
 
 	return (
-		<div className="zipcode-form">
-			<form onSubmit={handleZipcodeSubmit}>
-				<label>
-					Enter Zipcode:
-					<input
-						type="text"
-						value={zipcode}
-						onChange={(e) => setZipcode(e.target.value)}
-						placeholder="Enter Zipcode"
-					/>
-				</label>
-				<button type="submit">Submit</button>
-			</form>
-		</div>
+		<form onSubmit={handleSubmit}>
+			{/* Zip Code Input */}
+			<div>
+				<label htmlFor="zipcode">Zip Code:</label>
+				<input
+					type="text"
+					id="zipcode"
+					value={inputZipCode}
+					onChange={(e) => setInputZipCode(e.target.value)}
+					required
+				/>
+			</div>
+
+			<button type="submit">Submit</button>
+		</form>
 	);
 }
+
 export default ZipcodeForm;
