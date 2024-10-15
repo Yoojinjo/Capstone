@@ -164,37 +164,36 @@ function Calendar() {
 		setDirectionsVisible(true); // Show directions again
 	};
 
-	// delete event
+	// // delete event
+	// const handleDelete = async () => {
+	// 	await deleteEvent(editingEvent.id);
+	// 	setEvents(events.filter((event) => event.id !== editingEvent.id));
+	// 	setEditingEvent(null);
+	// 	setDirectionsVisible(true);
+	// };
+
+	// delete event and related events sharing the same groupId
 	const handleDelete = async () => {
-		await deleteEvent(editingEvent.id);
-		setEvents(events.filter((event) => event.id !== editingEvent.id));
+		if (!editingEvent) return; // Ensure there is an event to delete
+
+		const { groupId } = editingEvent;
+
+		// Filter the events to get all events with the same groupId
+		const eventsToDelete = events.filter(
+			(event) => event.groupId === groupId
+		);
+
+		// Delete all events with the same groupId from the backend
+		await Promise.all(eventsToDelete.map((event) => deleteEvent(event.id)));
+
+		// Update the state by removing the deleted events
+		setEvents(events.filter((event) => event.groupId !== groupId));
+
+		// Clear the editing form and show directions again
 		setEditingEvent(null);
 		setDirectionsVisible(true);
 	};
 
-	// // delete event and related events sharing the same groupId
-	// const handleDelete = async () => {
-	// 	if (!editingEvent) return; // Ensure there is an event to delete
-
-	// 	const { groupId } = editingEvent;
-
-	// 	// Filter the events to get all events with the same groupId
-	// 	const eventsToDelete = events.filter(
-	// 		(event) => event.groupId === groupId
-	// 	);
-
-	// 	// Delete all events with the same groupId from the backend
-	// 	for (const event of eventsToDelete) {
-	// 		await deleteEvent(event.id); // Assuming deleteEvent is an async function for backend deletion
-	// 	}
-
-	// 	// Update the state by removing the deleted events
-	// 	setEvents(events.filter((event) => event.groupId !== groupId));
-
-	// 	// Clear the editing form and show directions again
-	// 	setEditingEvent(null);
-	// 	setDirectionsVisible(true);
-	// };
 	return (
 		<div>
 			{/* Date input and button to generate the events */}
