@@ -37,6 +37,7 @@ function Calendar() {
 
 	const frostDates = [
 		{
+			title: "Frost Dates",
 			start: "2024-10-14",
 			end: "2025-05-03",
 			display: "background",
