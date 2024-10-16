@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid/index.js"; // Month view
 import timeGridPlugin from "@fullcalendar/timegrid/index.js"; // Week and day views
 import interactionPlugin from "@fullcalendar/interaction/index.js"; // Drag and drop, selectable
 import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
-
+import EventControls from "./EventControls";
 import Directions from "./Directions";
 import EventForm from "./EventForm";
 import {
@@ -246,20 +246,11 @@ function Calendar({ frostDates }) {
 	return (
 		<div>
 			{/* Date input and button to generate the events */}
-
-			<div className="event-controls">
-				<label>
-					Select Transplant Date:{" "}
-					<input
-						type="date"
-						value={selectedDate || ""}
-						onChange={handleDateChange}
-					/>
-				</label>
-				<button onClick={handleAddEvents}>
-					Schedule Tomato Planting
-				</button>
-			</div>
+			<EventControls
+				selectedDate={selectedDate}
+				handleDateChange={handleDateChange}
+				handleAddEvents={handleAddEvents}
+			/>
 			<div className="calendar-container">
 				<div className="calendar">
 					<FullCalendar
