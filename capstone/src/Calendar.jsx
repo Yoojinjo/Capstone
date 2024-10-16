@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
 import EventControls from "./EventControls";
 import Directions from "./Directions";
 import EventForm from "./EventForm";
+import useEventHandlers from "./EventHandlers";
 
 import {
 	getEvents,
@@ -15,15 +16,28 @@ import {
 	deleteEvent,
 	getFrostDates,
 } from "./api";
+
 import "./Calendar.css";
 
 function Calendar({ frostDates }) {
 	const [events, setEvents] = useState([]);
-	const [selectedDate, setSelectedDate] = useState(null);
+
 	const [editingEvent, setEditingEvent] = useState(null);
 	const [directionsVisible, setDirectionsVisible] = useState(true);
-	const [firstFrost, setFirstFrost] = useState("");
-	const [lastFrost, setLastFrost] = useState("");
+	const {
+		selectedDate,
+		setSelectedDate,
+		handleDateClick,
+		handleEventChange,
+		handleEventClick,
+		handleFormSubmit,
+		handleDelete,
+	} = useEventHandlers(
+		events,
+		setEvents,
+		setEditingEvent,
+		setDirectionsVisible
+	);
 
 	// Fetch events from the backend on component mount
 	useEffect(() => {
@@ -51,63 +65,63 @@ function Calendar({ frostDates }) {
 		fetchAllEvents();
 	}, []);
 
-	// Handle date click (for selecting a transplant date)
-	const handleDateClick = (dateClickInfo) => {
-		// Update the selected date with the clicked date (in YYYY-MM-DD format)
-		const clickedDate = new Date(dateClickInfo.dateStr)
-			.toISOString()
-			.substring(0, 10);
-		setSelectedDate(clickedDate);
-	};
+	// // Handle date click (for selecting a transplant date)
+	// const handleDateClick = (dateClickInfo) => {
+	// 	// Update the selected date with the clicked date (in YYYY-MM-DD format)
+	// 	const clickedDate = new Date(dateClickInfo.dateStr)
+	// 		.toISOString()
+	// 		.substring(0, 10);
+	// 	setSelectedDate(clickedDate);
+	// };
 
 	// Set the selected date from the input
 	const handleDateChange = (e) => {
 		setSelectedDate(e.target.value);
 	};
 
-	// Handle event drop/resize (when events are dragged or resized)
-	const handleEventChange = async (changeInfo) => {
-		const updatedEvent = {
-			id: changeInfo.event.id, // Use the event's unique ID
-			title: changeInfo.event.title,
-			start: changeInfo.event.start.toISOString(), // Ensure start time is in ISO format
-			end: changeInfo.event.end
-				? changeInfo.event.end.toISOString()
-				: null, // Ensure end time is in ISO format
-		};
+	// // Handle event drop/resize (when events are dragged or resized)
+	// const handleEventChange = async (changeInfo) => {
+	// 	const updatedEvent = {
+	// 		id: changeInfo.event.id, // Use the event's unique ID
+	// 		title: changeInfo.event.title,
+	// 		start: changeInfo.event.start.toISOString(), // Ensure start time is in ISO format
+	// 		end: changeInfo.event.end
+	// 			? changeInfo.event.end.toISOString()
+	// 			: null, // Ensure end time is in ISO format
+	// 	};
 
-		// Update event in backend
-		await updateEvent(updatedEvent.id, updatedEvent);
-		setEvents((prevEvents) =>
-			prevEvents.map((event) =>
-				event.id === updatedEvent.id ? updatedEvent : event
-			)
-		);
-	};
+	// 	// Update event in backend
+	// 	await updateEvent(updatedEvent.id, updatedEvent);
+	// 	setEvents((prevEvents) =>
+	// 		prevEvents.map((event) =>
+	// 			event.id === updatedEvent.id ? updatedEvent : event
+	// 		)
+	// 	);
+	// };
 
-	// Handle event click (for further interactions like editing)
-	const handleEventClick = (clickInfo) => {
-		const clickedEvent = events.find(
-			(event) => event.id === clickInfo.event.id
-		);
-		console.log("Clicked Event:", clickedEvent);
-		setEditingEvent(clickedEvent);
-		setDirectionsVisible(false); // Hide directions when editing
-	};
+	// // Handle event click (for further interactions like editing)
+	// const handleEventClick = (clickInfo) => {
+	// 	const clickedEvent = events.find(
+	// 		(event) => event.id === clickInfo.event.id
+	// 	);
+	// 	console.log("Clicked Event:", clickedEvent);
+	// 	setEditingEvent(clickedEvent);
+	// 	setDirectionsVisible(false); // Hide directions when editing
+	// };
 
-	// Handle form submission to save changes
-	const handleFormSubmit = async (e) => {
-		e.preventDefault();
-		const updatedEvents = events.map((event) =>
-			event.id === editingEvent.id ? editingEvent : event
-		);
+	// // Handle form submission to save changes
+	// const handleFormSubmit = async (e) => {
+	// 	e.preventDefault();
+	// 	const updatedEvents = events.map((event) =>
+	// 		event.id === editingEvent.id ? editingEvent : event
+	// 	);
 
-		// Update the event in the backend
-		await updateEvent(editingEvent.id, editingEvent);
-		setEvents(updatedEvents);
-		setEditingEvent(null);
-		setDirectionsVisible(true);
-	};
+	// 	// Update the event in the backend
+	// 	await updateEvent(editingEvent.id, editingEvent);
+	// 	setEvents(updatedEvents);
+	// 	setEditingEvent(null);
+	// 	setDirectionsVisible(true);
+	// };
 
 	// Handle form input changes
 	const handleInputChange = (e) => {
@@ -121,27 +135,27 @@ function Calendar({ frostDates }) {
 		setDirectionsVisible(true); // Show directions again
 	};
 
-	// delete event and related events sharing the same groupId
-	const handleDelete = async () => {
-		if (!editingEvent) return; // Ensure there is an event to delete
+	// // delete event and related events sharing the same groupId
+	// const handleDelete = async () => {
+	// 	if (!editingEvent) return; // Ensure there is an event to delete
 
-		const { groupId } = editingEvent;
+	// 	const { groupId } = editingEvent;
 
-		// Filter the events to get all events with the same groupId
-		const eventsToDelete = events.filter(
-			(event) => event.groupId === groupId
-		);
+	// 	// Filter the events to get all events with the same groupId
+	// 	const eventsToDelete = events.filter(
+	// 		(event) => event.groupId === groupId
+	// 	);
 
-		// Delete all events with the same groupId from the backend
-		await Promise.all(eventsToDelete.map((event) => deleteEvent(event.id)));
+	// 	// Delete all events with the same groupId from the backend
+	// 	await Promise.all(eventsToDelete.map((event) => deleteEvent(event.id)));
 
-		// Update the state by removing the deleted events
-		setEvents(events.filter((event) => event.groupId !== groupId));
+	// 	// Update the state by removing the deleted events
+	// 	setEvents(events.filter((event) => event.groupId !== groupId));
 
-		// Clear the editing form and show directions again
-		setEditingEvent(null);
-		setDirectionsVisible(true);
-	};
+	// 	// Clear the editing form and show directions again
+	// 	setEditingEvent(null);
+	// 	setDirectionsVisible(true);
+	// };
 
 	return (
 		<div>

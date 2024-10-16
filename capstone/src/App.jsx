@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import Register from "./Register";
+import Login from "./Login";
 import Calendar from "./Calendar";
 import FrostDateForm from "./FrostDateForm";
 import ZipcodeForm from "./ZipcodeForm";
@@ -39,6 +41,9 @@ function App() {
 
 	return (
 		<>
+			<h1>Fresh Tomatoes: garden planner beta</h1>
+			<Register />
+			<Login />
 			<h1>Garden Calendar v.0</h1>
 			<h5>Enter your zipcode</h5>
 			<ZipcodeForm setZipCode={setZipCode} />
