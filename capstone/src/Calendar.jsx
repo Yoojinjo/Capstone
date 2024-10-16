@@ -200,9 +200,11 @@ function Calendar({ frostDates }) {
 						<EventForm
 							editingEvent={editingEvent}
 							handleInputChange={handleInputChange}
-							handleFormSubmit={handleFormSubmit}
+							handleFormSubmit={() =>
+								handleFormSubmit(editingEvent)
+							}
 							handleCancel={handleCancel}
-							handleDelete={handleDelete}
+							handleDelete={() => handleDelete(editingEvent)}
 						/>
 					)}
 				</div>

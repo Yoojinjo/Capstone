@@ -53,7 +53,15 @@ const useEventHandlers = (
 	};
 
 	const handleDelete = async (editingEvent) => {
-		if (!editingEvent) return;
+		if (!editingEvent) {
+			console.error("No editingEvent provided for deletion");
+			return;
+		}
+
+		if (!editingEvent.id) {
+			console.error("No ID found for editingEvent", editingEvent);
+			return;
+		}
 		const { groupId } = editingEvent;
 		const eventsToDelete = events.filter(
 			(event) => event.groupId === groupId
