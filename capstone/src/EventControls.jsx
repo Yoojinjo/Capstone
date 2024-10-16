@@ -1,6 +1,6 @@
 import React from "react";
-
-function EventControls({ selectedDate, handleDateChange, handleAddEvents }) {
+import AddTomatoEvents from "./AddTomatoEvents";
+function EventControls({ selectedDate, handleDateChange, events, setEvents }) {
 	return (
 		<div className="event-controls">
 			<label>
@@ -11,7 +11,11 @@ function EventControls({ selectedDate, handleDateChange, handleAddEvents }) {
 					onChange={handleDateChange}
 				/>
 			</label>
-			<button onClick={handleAddEvents}>Schedule Tomato Planting</button>
+			<AddTomatoEvents
+				selectedDate={selectedDate}
+				events={events}
+				setEvents={setEvents}
+			/>
 		</div>
 	);
 }
