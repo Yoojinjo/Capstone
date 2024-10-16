@@ -2,7 +2,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase"; // Make sure this is the correct path to your firebase.js file
 
-function Login() {
+function Login({ onLogin }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -11,6 +11,10 @@ function Login() {
 
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
+			const isAuthenticated = true;
+			if (isAuthenticated) {
+				onLogin(); // Call the onLogin function passed from App
+			}
 			alert("Logged in successfully!");
 		} catch (error) {
 			console.error("Error logging in:", error);

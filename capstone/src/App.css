@@ -1,6 +1,45 @@
+body,
+html {
+	height: 100%; /* Ensure body takes full height */
+	margin: 0; /* Remove default margin */
+}
+
+.app-container {
+	display: flex; /* Enable flexbox */
+	flex-direction: column; /* Arrange items in a column */
+	justify-content: center; /* Center items vertically */
+	align-items: center; /* Center items horizontally */
+	height: 100vh; /* Full viewport height */
+	padding: 20px; /* Optional padding */
+	box-sizing: border-box; /* Include padding in height/width calculations */
+}
+
 .frostdates {
 	background-color: rgb(185, 169, 197);
 	padding: 1px;
 	font-size: large;
 	text-align: center;
+}
+.zipcode-search {
+	display: flex;
+	align-items: center; /* Align items vertically in the center */
+}
+
+.zipcode-search a {
+	margin-left: 10px; /* Space between the form and the link */
+}
+.zipcode-form {
+	display: flex;
+	align-items: center; /* Align items vertically in the center */
+}
+
+.zipcode-form div {
+	margin-right: 10px; /* Space between the input and the button */
+}
+.frostdate-input {
+	border: 1px solid #ccc; /* Light gray border */
+	padding: 20px; /* Space inside the border */
+	margin-top: 20px; /* Space above the input section */
+	border-radius: 5px; /* Rounded corners (optional) */
+	background-color: #f9f9f9; /* Light background color (optional) */
 }

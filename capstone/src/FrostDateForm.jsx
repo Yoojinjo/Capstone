@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 function FrostDateForm({
 	handleSaveFrostDates,
@@ -7,12 +7,6 @@ function FrostDateForm({
 }) {
 	const [firstFrost, setFirstFrost] = useState(initialFirstFrost || "");
 	const [lastFrost, setLastFrost] = useState(initialLastFrost || "");
-
-	// Update state when initial props change
-	useEffect(() => {
-		setFirstFrost(initialFirstFrost || "");
-		setLastFrost(initialLastFrost || "");
-	}, [initialFirstFrost, initialLastFrost]);
 
 	// Handle form submission
 	const handleSubmit = (e) => {

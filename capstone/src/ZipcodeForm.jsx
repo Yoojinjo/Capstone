@@ -10,7 +10,7 @@ function ZipcodeForm({ setZipCode }) {
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
+		<form onSubmit={handleSubmit} className="zipcode-form">
 			{/* Zip Code Input */}
 			<div>
 				<label htmlFor="zipcode">Zip Code:</label>

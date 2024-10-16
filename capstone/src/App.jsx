@@ -1,71 +1,45 @@
-import { useState, useEffect } from "react";
+// App.jsx
+import { useState } from "react";
 import Register from "./Register";
 import Login from "./Login";
 import Calendar from "./Calendar";
-import FrostDateForm from "./FrostDateForm";
-import ZipcodeForm from "./ZipcodeForm";
+import EnterFrostDates from "./EnterFrostDates";
 import "./App.css";
-import { saveFrostDates, getFrostDates } from "./api";
+import { saveFrostDates } from "./api";
 
 function App() {
-	const [zipCode, setZipCode] = useState("");
 	const [frostDates, setFrostDates] = useState({
 		firstFrost: "",
 		lastFrost: "",
 	});
+	const [zipCode, setZipCode] = useState("");
+	const [loggedIn, setLoggedIn] = useState(false);
 
-	useEffect(() => {
-		const fetchFrostDates = async () => {
-			try {
-				const data = await getFrostDates();
-				setFrostDates(data);
-			} catch (error) {
-				console.error("Error fetching frost dates", error);
-			}
-		};
-
-		fetchFrostDates();
-	}, []); // empty array runs once on mount
-
-	// save frost dates
-	const handleSaveFrostDates = async (firstFrost, lastFrost) => {
-		try {
-			const response = await saveFrostDates(firstFrost, lastFrost);
-			console.log(response); // Handle the response as needed
-			alert("Frost dates saved successfully!");
-		} catch (error) {
-			console.error("Error saving frost dates", error);
-			alert("There was an error saving the frost dates.");
-		}
+	// update login status
+	const handleLogin = () => {
+		setLoggedIn(true);
+	};
+	// Save frost dates handler
+	const handleSaveFrostDates = (firstFrost, lastFrost) => {
+		setFrostDates({ firstFrost, lastFrost });
+		saveFrostDates(firstFrost, lastFrost); // Call your API to save frost dates
 	};
 
 	return (
-		<>
-			<h1>Fresh Tomatoes: garden planner beta</h1>
+		<div className="app-container">
+			<h1>Fresh Tomatoes: Garden Planner (beta)</h1>
 			<Register />
-			<Login />
-			<h1>Garden Calendar v.0</h1>
-			<h5>Enter your zipcode</h5>
-			<ZipcodeForm setZipCode={setZipCode} />
-			{zipCode && (
-				<div>
-					<h5>Frost Dates for Zipcode: {zipCode}</h5>
-					<a
-						href={`https://www.almanac.com/gardening/frostdates/zipcode/${zipCode}`}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						See Frost Dates for {zipCode}
-					</a>
-					<FrostDateForm
-						handleSaveFrostDates={handleSaveFrostDates}
-						initialFirstFrost={frostDates.firstFrost}
-						initialLastFrost={frostDates.lastFrost}
-					/>
-				</div>
+			<Login onLogin={handleLogin} /> {/* Pass handleLogin  to Login */}
+			{loggedIn && (
+				<EnterFrostDates
+					frostDates={frostDates}
+					setZipCode={setZipCode} // Pass the setter to manage the zip code
+					handleSaveFrostDates={handleSaveFrostDates}
+				/>
 			)}
-			<Calendar frostDates={frostDates} />
-		</>
+			{/* Pass frostDates to Calendar */}
+			{/* <Calendar frostDates={frostDates} /> */}
+		</div>
 	);
 }
 
