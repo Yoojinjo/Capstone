@@ -7,23 +7,48 @@ import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
 
 import Directions from "./Directions";
 import EventForm from "./EventForm";
-import { getEvents, createEvent, updateEvent, deleteEvent } from "./api";
+import {
+	getEvents,
+	createEvent,
+	updateEvent,
+	deleteEvent,
+	saveFrostDates,
+	getFrostDates,
+} from "./api";
 import "./Calendar.css";
 
-function Calendar() {
+function Calendar({ frostDates }) {
 	const [events, setEvents] = useState([]);
 	const [selectedDate, setSelectedDate] = useState(null);
 	const [editingEvent, setEditingEvent] = useState(null);
 	const [directionsVisible, setDirectionsVisible] = useState(true);
+	const [firstFrost, setFirstFrost] = useState("");
+	const [lastFrost, setLastFrost] = useState("");
 
 	// Fetch events from the backend on component mount
 	useEffect(() => {
-		const fetchEvents = async () => {
+		const fetchAllEvents = async () => {
 			const fetchedEvents = await getEvents();
-			setEvents(fetchedEvents);
+			const frostDates = (await getFrostDates())[0];
+
+			console.log("Fetched Events:", fetchedEvents);
+			console.log("Fetched Frost Dates:", frostDates);
+
+			const frostEvents = [
+				{
+					title: "Frost Dates",
+					start: frostDates.firstFrost.split("T")[0], // Get only the date part
+					end: frostDates.lastFrost.split("T")[0], // Get only the date part
+					display: "background",
+					backgroundColor: "darkblue",
+					borderColor: "transparent",
+				},
+			];
+			console.log("Frost Events:", frostEvents);
+			setEvents([...fetchedEvents, ...frostEvents]); // Merge all events
 		};
 
-		fetchEvents();
+		fetchAllEvents();
 	}, []);
 
 	// Handle date click (for selecting a transplant date)
@@ -35,16 +60,28 @@ function Calendar() {
 		setSelectedDate(clickedDate);
 	};
 
-	const frostDates = [
-		{
-			title: "Frost Dates",
-			start: "2024-10-14",
-			end: "2025-05-03",
-			display: "background",
-			backgroundColor: "darkblue", // Frost highlight color
-			borderColor: "transparent", // Optional: Remove border for background event
-		},
-	];
+	const handleSaveFrostDates = async (e) => {
+		e.preventDefault();
+		try {
+			const response = await saveFrostDates(firstFrost, lastFrost);
+			// Update frost dates visually
+			const frostEvents = [
+				{
+					title: "Frost Dates",
+					start: firstFrost,
+					end: lastFrost,
+					display: "background",
+					backgroundColor: "darkblue",
+					borderColor: "transparent",
+				},
+			];
+			setEvents((prevEvents) => [...prevEvents, ...frostEvents]);
+			alert("Frost dates saved successfully!");
+		} catch (error) {
+			console.error("Error saving frost dates", error);
+			alert("There was an error saving the frost dates.");
+		}
+	};
 
 	// Function to add the 'Tomato Transplant', 'Seed Start', and 'First Tomato Harvest' events
 	const handleAddEvents = async () => {
@@ -232,7 +269,7 @@ function Calendar() {
 							interactionPlugin,
 						]}
 						initialView="dayGridMonth" // Default view: month
-						events={[...events, ...frostDates]} // Display events
+						events={events} // Display events
 						dateClick={handleDateClick} // Click on a date to add a new event
 						eventClick={handleEventClick} // Click on an event to trigger an action
 						editable={true} // Allow event drag-and-drop
