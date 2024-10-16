@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid"; // For generating unique event IDs
 import EventControls from "./EventControls";
 import Directions from "./Directions";
 import EventForm from "./EventForm";
+import FrostDateForm from "./FrostDateForm";
 import {
 	getEvents,
 	createEvent,
@@ -58,29 +59,6 @@ function Calendar({ frostDates }) {
 			.toISOString()
 			.substring(0, 10);
 		setSelectedDate(clickedDate);
-	};
-
-	const handleSaveFrostDates = async (e) => {
-		e.preventDefault();
-		try {
-			const response = await saveFrostDates(firstFrost, lastFrost);
-			// Update frost dates visually
-			const frostEvents = [
-				{
-					title: "Frost Dates",
-					start: firstFrost,
-					end: lastFrost,
-					display: "background",
-					backgroundColor: "darkblue",
-					borderColor: "transparent",
-				},
-			];
-			setEvents((prevEvents) => [...prevEvents, ...frostEvents]);
-			alert("Frost dates saved successfully!");
-		} catch (error) {
-			console.error("Error saving frost dates", error);
-			alert("There was an error saving the frost dates.");
-		}
 	};
 
 	// Function to add the 'Tomato Transplant', 'Seed Start', and 'First Tomato Harvest' events
@@ -212,14 +190,6 @@ function Calendar({ frostDates }) {
 		setEditingEvent(null); // Close the form
 		setDirectionsVisible(true); // Show directions again
 	};
-
-	// // delete event
-	// const handleDelete = async () => {
-	// 	await deleteEvent(editingEvent.id);
-	// 	setEvents(events.filter((event) => event.id !== editingEvent.id));
-	// 	setEditingEvent(null);
-	// 	setDirectionsVisible(true);
-	// };
 
 	// delete event and related events sharing the same groupId
 	const handleDelete = async () => {
