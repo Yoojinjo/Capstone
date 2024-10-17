@@ -1,6 +1,12 @@
 import React from "react";
 import AddTomatoEvents from "./AddTomatoEvents";
-function EventControls({ selectedDate, handleDateChange, events, setEvents }) {
+function EventControls({
+	selectedDate,
+	handleDateChange,
+	events,
+	setEvents,
+	userEmail,
+}) {
 	return (
 		<div className="event-controls">
 			<label>
@@ -15,6 +21,7 @@ function EventControls({ selectedDate, handleDateChange, events, setEvents }) {
 				selectedDate={selectedDate}
 				events={events}
 				setEvents={setEvents}
+				userEmail={userEmail}
 			/>
 		</div>
 	);

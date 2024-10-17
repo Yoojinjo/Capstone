@@ -4,12 +4,17 @@ import axios from "axios";
 const API_URL = "http://localhost:5000"; // Change to your server URL if deployed
 
 export const saveFrostDates = async (firstFrost, lastFrost, userEmail) => {
-	const response = await axios.post(`${API_URL}/frostDates`, {
-		firstFrost,
-		lastFrost,
-		userEmail, // Include userEmail
-	});
-	return response.data;
+	try {
+		const response = await axios.post("/api/frost-dates", {
+			firstFrost,
+			lastFrost,
+			userEmail,
+		});
+		return response.data; // Assuming the backend sends back the saved data or a success message
+	} catch (error) {
+		console.error("Error saving frost dates:", error);
+		throw error; // Rethrow the error for further handling in the caller function
+	}
 };
 
 export const getFrostDates = async (userEmail) => {
@@ -32,13 +37,15 @@ export const getEvents = async (userEmail) => {
 };
 
 export const createEvent = async (event, userEmail) => {
+	console.log(event);
+	console.log(userEmail);
 	const response = await axios.post(`${API_URL}/events`, {
 		id: event.id,
 		groupId: event.groupId,
 		title: event.title,
 		start: event.start,
 		end: event.end,
-		userEmail, // Include userEmail
+		userEmail: userEmail, // Include userEmail
 	});
 	return response.data;
 };

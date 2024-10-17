@@ -30,9 +30,20 @@ function App() {
 
 	// Save frost dates handler
 	const handleSaveFrostDates = async (firstFrost, lastFrost) => {
+		console.log("Saving Frost Dates:", { firstFrost, lastFrost });
 		setFrostDates({ firstFrost, lastFrost });
-		await saveFrostDates(firstFrost, lastFrost); // Save frost dates with email
-		setFrostDatesSaved(true);
+		try {
+			const response = await saveFrostDates(
+				firstFrost,
+				lastFrost,
+				userEmail
+			);
+			console.log("Save response:", response); // Check the response
+			setFrostDatesSaved(true);
+			console.log("Frost dates saved successfully!");
+		} catch (error) {
+			console.error("Error saving frost dates:", error);
+		}
 	};
 
 	// Check if frost dates are already saved for the user when logged in
@@ -41,10 +52,13 @@ function App() {
 			const fetchFrostDates = async () => {
 				try {
 					const frostData = await getFrostDates(userEmail);
+					console.log(frostData);
+					console.log(frostData[0].firstFrost);
+					console.log(frostData[0].lastFrost);
 					if (
 						frostData &&
-						frostData.firstFrost &&
-						frostData.lastFrost
+						frostData[0].firstFrost &&
+						frostData[0].lastFrost
 					) {
 						setFrostDates({
 							firstFrost: frostData.firstFrost,
@@ -61,7 +75,8 @@ function App() {
 			fetchFrostDates();
 		}
 	}, [loggedIn, userEmail]);
-
+	console.log("Logged In:", loggedIn);
+	console.log("Frost Dates Saved:", frostDatesSaved);
 	return (
 		<div className="app-container">
 			<h1>Fresh Tomatoes: Garden Planner (beta)</h1>
@@ -77,6 +92,7 @@ function App() {
 			{loggedIn && !frostDatesSaved ? ( // Conditionally render based on login status and frostdates entered
 				<EnterFrostDates
 					frostDates={frostDates}
+					setFrostDates={setFrostDates}
 					setZipCode={setZipCode} // Pass the setter to manage the zip code
 					handleSaveFrostDates={handleSaveFrostDates}
 					userEmail={userEmail}

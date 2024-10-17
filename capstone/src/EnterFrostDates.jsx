@@ -1,8 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ZipcodeForm from "./ZipcodeForm";
-import { getFrostDates, saveFrostDates } from "./api";
+import { saveFrostDates } from "./api";
 
-function EnterFrostDates({ frostDates, setZipCode, userEmail }) {
+function EnterFrostDates({
+	frostDates,
+	setFrostDates,
+	setZipCode,
+	handleSaveFrostDates, // This is the prop from App
+	userEmail,
+}) {
 	const [zipInput, setZipInput] = useState("");
 	const [firstFrost, setFirstFrost] = useState(frostDates.firstFrost || "");
 	const [lastFrost, setLastFrost] = useState(frostDates.lastFrost || "");
@@ -12,19 +18,19 @@ function EnterFrostDates({ frostDates, setZipCode, userEmail }) {
 		setZipInput(inputZipCode);
 	};
 
-	const handleSaveFrostDates = async (firstFrost, lastFrost) => {
+	const handleSave = async () => {
 		try {
 			await saveFrostDates(firstFrost, lastFrost, userEmail);
-			alert("Frost dates saved successfully!");
+			setFrostDates({ firstFrost, lastFrost });
+			// This should set it to true after the save, if you need this state
 		} catch (error) {
-			console.error("Error saving frost dates", error);
-			alert("There was an error saving the frost dates.");
+			console.error("Error saving frost dates:", error);
 		}
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault(); // Prevent the default form submission
-		handleSaveFrostDates(firstFrost, lastFrost);
+		handleSave(); // Call the renamed function instead
 	};
 
 	return (
