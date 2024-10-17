@@ -38,7 +38,10 @@ function Calendar({ frostDates, userEmail }) {
 		setEditingEvent,
 		setDirectionsVisible
 	);
-
+	useEffect(() => {
+		console.log("Calendar component rendered");
+		console.log(frostDates, userEmail); // Log the props to make sure they are passed
+	}, [frostDates, userEmail]);
 	// Fetch events from the backend on component mount
 	useEffect(() => {
 		const fetchAllEvents = async () => {
