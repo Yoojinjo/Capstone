@@ -1,7 +1,7 @@
 // src/api.js
 import axios from "axios";
 
-const API_URL = "https://freshtomatoes.netlify.app/"; // Change to your server URL if deployed
+const API_URL = "http://localhost:5000"; // Change to your server URL if deployed
 
 export const saveFrostDates = async (firstFrost, lastFrost, userEmail) => {
 	try {
@@ -37,17 +37,27 @@ export const getEvents = async (userEmail) => {
 };
 
 export const createEvent = async (event, userEmail) => {
-	console.log(event);
-	console.log(userEmail);
-	const response = await axios.post(`${API_URL}/events`, {
-		id: event.id,
-		groupId: event.groupId,
-		title: event.title,
-		start: event.start,
-		end: event.end,
-		userEmail: userEmail, // Include userEmail
-	});
-	return response.data;
+	try {
+		console.log(event);
+		console.log(userEmail);
+
+		const response = await axios.post(`${API_URL}/events`, {
+			id: event.id,
+			groupId: event.groupId,
+			title: event.title,
+			start: event.start,
+			end: event.end,
+			userEmail: userEmail, // Include userEmail
+		});
+
+		return response.data; // Return the successful response data
+	} catch (error) {
+		// Log the error details
+		console.error("Error creating event:", error);
+
+		// Throw the error to be handled elsewhere, or return a custom error message
+		throw new Error("Failed to create event. Please try again.");
+	}
 };
 
 export const updateEvent = async (id, event) => {
