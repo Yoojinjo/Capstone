@@ -5,7 +5,7 @@ const API_URL = "http://localhost:5000"; // Change to your server URL if deploye
 
 export const saveFrostDates = async (firstFrost, lastFrost, userEmail) => {
 	try {
-		const response = await axios.post("/api/frost-dates", {
+		const response = await axios.post(`${API_URL}/frostDates`, {
 			firstFrost,
 			lastFrost,
 			userEmail,
@@ -51,8 +51,22 @@ export const createEvent = async (event, userEmail) => {
 };
 
 export const updateEvent = async (id, event) => {
-	const response = await axios.put(`${API_URL}/events/${id}`, event);
-	return response.data;
+	try {
+		// Log the event data before the request
+		console.log("Updating Event ID:", id);
+		console.log("Event Data:", event);
+
+		const response = await axios.put(`${API_URL}/events/${id}`, event);
+
+		// Log the response data
+		console.log("Response from API:", response.data);
+
+		return response.data;
+	} catch (error) {
+		// Log the error if the request fails
+		console.error("Error updating event:", error);
+		throw error; // Re-throw the error to handle it later if needed
+	}
 };
 
 export const deleteEvent = async (id) => {

@@ -6,8 +6,8 @@ function EnterFrostDates({
 	frostDates,
 	setFrostDates,
 	setZipCode,
-	handleSaveFrostDates, // This is the prop from App
 	userEmail,
+	handleSaveFrostDates,
 }) {
 	const [zipInput, setZipInput] = useState("");
 	const [firstFrost, setFirstFrost] = useState(frostDates.firstFrost || "");
@@ -18,19 +18,9 @@ function EnterFrostDates({
 		setZipInput(inputZipCode);
 	};
 
-	const handleSave = async () => {
-		try {
-			await saveFrostDates(firstFrost, lastFrost, userEmail);
-			setFrostDates({ firstFrost, lastFrost });
-			// This should set it to true after the save, if you need this state
-		} catch (error) {
-			console.error("Error saving frost dates:", error);
-		}
-	};
-
 	const handleSubmit = (e) => {
 		e.preventDefault(); // Prevent the default form submission
-		handleSave(); // Call the renamed function instead
+		handleSaveFrostDates(firstFrost, lastFrost); // Call the renamed function instead
 	};
 
 	return (

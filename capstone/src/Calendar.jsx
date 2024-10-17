@@ -110,7 +110,7 @@ function Calendar({ frostDates, userEmail }) {
 						headerToolbar={{
 							left: "prev,next today",
 							center: "title",
-							right: "dayGridMonth,timeGridWeek,timeGridDay",
+							right: "dayGridMonth",
 						}} // Customize header buttons
 						height="auto" // Adjust calendar height to fit content
 					/>

@@ -1,9 +1,9 @@
-// App.jsx
 import { useState, useEffect } from "react";
 import Register from "./Register";
 import Login from "./Login";
 import Calendar from "./Calendar";
 import EnterFrostDates from "./EnterFrostDates";
+import LogoutButton from "./LogOutButton";
 import "./App.css";
 import { saveFrostDates, getFrostDates } from "./api";
 
@@ -26,6 +26,10 @@ function App() {
 		setLoggedIn(false);
 		setUserEmail(""); // Clear email on logout
 		setFrostDatesSaved(false); // Reset frost dates saved status on logout
+		setFrostDates({
+			firstFrost: "",
+			lastFrost: "",
+		});
 	};
 
 	// Save frost dates handler
@@ -53,16 +57,14 @@ function App() {
 				try {
 					const frostData = await getFrostDates(userEmail);
 					console.log(frostData);
-					console.log(frostData[0].firstFrost);
-					console.log(frostData[0].lastFrost);
 					if (
 						frostData &&
 						frostData[0].firstFrost &&
 						frostData[0].lastFrost
 					) {
 						setFrostDates({
-							firstFrost: frostData.firstFrost,
-							lastFrost: frostData.lastFrost,
+							firstFrost: frostData[0].firstFrost,
+							lastFrost: frostData[0].lastFrost,
 						});
 						setFrostDatesSaved(true); // Frost dates found and saved
 					} else {
@@ -75,12 +77,14 @@ function App() {
 			fetchFrostDates();
 		}
 	}, [loggedIn, userEmail]);
+
 	console.log("Logged In:", loggedIn);
 	console.log("Frost Dates Saved:", frostDatesSaved);
+
 	return (
 		<div className="app-container">
 			<h1>Fresh Tomatoes: Garden Planner (beta)</h1>
-			{/* Only show Register and Login if not logged in */}
+			{/* If not logged in, show Register and Login */}
 			{!loggedIn && (
 				<>
 					<Register />
@@ -88,20 +92,21 @@ function App() {
 					{/* Pass handleLogin to Login */}
 				</>
 			)}
-
-			{loggedIn && !frostDatesSaved ? ( // Conditionally render based on login status and frostdates entered
+			{/* If logged in, show EnterFrostDates */}
+			{loggedIn && (
 				<EnterFrostDates
 					frostDates={frostDates}
 					setFrostDates={setFrostDates}
 					setZipCode={setZipCode} // Pass the setter to manage the zip code
-					handleSaveFrostDates={handleSaveFrostDates}
 					userEmail={userEmail}
+					handleSaveFrostDates={handleSaveFrostDates}
 				/>
-			) : loggedIn && frostDatesSaved ? (
-				<Calendar frostDates={frostDates} userEmail={userEmail} />
-			) : (
-				<p>Please log in</p>
 			)}
+			{loggedIn && frostDatesSaved && (
+				<Calendar frostDates={frostDates} userEmail={userEmail} />
+			)}
+
+			{loggedIn && <LogoutButton onLogout={handleLogout} />}
 		</div>
 	);
 }

@@ -78,8 +78,6 @@ const AddTomatoEvents = ({ selectedDate, events, setEvents, userEmail }) => {
 			createdSeedStartEvent,
 			createdHarvestEvent,
 		]);
-
-		alert("Events have been added to the calendar!");
 	};
 
 	return <button onClick={handleAddEvents}>Add Tomatoes</button>;
