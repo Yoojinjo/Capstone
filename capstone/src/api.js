@@ -1,7 +1,7 @@
 // src/api.js
 import axios from "axios";
 
-const API_URL = "http://localhost:5000"; // Change to your server URL if deployed
+const API_URL = "https://freshtomatoes.netlify.app/"; // Change to your server URL if deployed
 
 export const saveFrostDates = async (firstFrost, lastFrost, userEmail) => {
 	try {
