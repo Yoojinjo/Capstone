@@ -9,14 +9,19 @@
 	padding: 20px;
 	border: solid brown 2px;
 	border-radius: 5px;
+	max-height: 80vh; /* Set a maximum height (80% of viewport height) */
+	overflow-y: auto; /* Enable vertical scrolling if content overflows */
+	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+	background: linear-gradient(to bottom right, #fff3e0, #ffcc80);
 }
 .info-section {
 	width: 25%;
 	padding: 20px;
 	border-left: 1px solid #ccc; /* Optional: visual separation */
-
 	border: solid brown 2px;
 	border-radius: 5px;
+	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+	background: linear-gradient(to bottom right, #fff3e0, #ffcc80);
 }
 .edit-event-modal {
 	width: 90%; /* Set a fixed width for the info section */
