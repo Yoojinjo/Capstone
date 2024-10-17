@@ -7,7 +7,38 @@ html {
 	height: 100%; /* Ensure body takes full height */
 	margin: 0; /* Remove default margin */
 }
+button {
+	padding: 10px 20px; /* Adjusts the space inside the button */
+	font-size: 14px; /* Increases the font size */
+	border-radius: 5px; /* Rounds the corners of the button */
+	background-color: #007bff; /* Changes the background color */
+	color: white; /* Sets the text color */
+	border: none; /* Removes the default border */
+	cursor: pointer; /* Changes the cursor to pointer on hover */
+	transition: background-color 0.3s; /* Adds a smooth transition effect */
+}
 
+button:hover {
+	background-color: #0056b3; /* Darkens the background on hover */
+}
+
+.logout-button,
+.tomato-button {
+	margin: 20px 0; /* Adjust the margin to position it higher */
+	padding: 12px 24px; /* Increase padding for a larger button */
+	font-size: 14px; /* Make the font larger */
+	background-color: #ff4d4d; /* Red color for logout button */
+	color: white; /* Text color */
+	border: none; /* No border */
+	border-radius: 5px; /* Rounded corners */
+	cursor: pointer; /* Pointer cursor on hover */
+	transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+.logout-button:hover,
+.tomato-button {
+	background-color: #ff1a1a; /* Darker red on hover */
+}
 .app-container {
 	display: flex; /* Enable flexbox */
 	flex-direction: column; /* Arrange items in a column */

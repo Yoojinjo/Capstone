@@ -80,7 +80,11 @@ const AddTomatoEvents = ({ selectedDate, events, setEvents, userEmail }) => {
 		]);
 	};
 
-	return <button onClick={handleAddEvents}>Add Tomatoes</button>;
+	return (
+		<button onClick={handleAddEvents} className="tomato-button">
+			Add Tomatoes
+		</button>
+	);
 };
 
 export default AddTomatoEvents;
