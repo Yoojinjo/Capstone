@@ -27,7 +27,7 @@ function EventForm({
 							editingEvent.start
 								? editingEvent.start.replace("Z", "")
 								: ""
-						} // Remove 'Z' for local time
+						}
 						onChange={handleInputChange}
 					/>
 				</div>
@@ -36,7 +36,11 @@ function EventForm({
 					<input
 						type="datetime-local"
 						name="end"
-						value={editingEvent.end.replace("Z", "")} // Remove 'Z' for local time
+						value={
+							editingEvent.end
+								? editingEvent.end.replace("Z", "")
+								: ""
+						}
 						onChange={handleInputChange}
 					/>
 				</div>
@@ -55,5 +59,4 @@ function EventForm({
 		</div>
 	);
 }
-
 export default EventForm;
