@@ -6,14 +6,20 @@
 .calendar {
 	flex: 1; /* Make the calendar take the available space */
 	margin-right: 20px; /* Add space between the calendar and the info section */
+	padding: 20px;
+	border: solid brown 2px;
+	border-radius: 5px;
 }
 .info-section {
 	width: 25%;
 	padding: 20px;
 	border-left: 1px solid #ccc; /* Optional: visual separation */
+
+	border: solid brown 2px;
+	border-radius: 5px;
 }
 .edit-event-modal {
-	width: 300px; /* Set a fixed width for the info section */
+	width: 90%; /* Set a fixed width for the info section */
 	background-color: #f9f9f9; /* Background color for visibility */
 	border: 1px solid #ccc; /* Border around the section */
 	padding: 10px; /* Padding for inner spacing */

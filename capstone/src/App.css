@@ -9,6 +9,7 @@ html {
 }
 button {
 	padding: 10px 20px; /* Adjusts the space inside the button */
+	margin: 1px;
 	font-size: 14px; /* Increases the font size */
 	border-radius: 5px; /* Rounds the corners of the button */
 	background-color: #007bff; /* Changes the background color */

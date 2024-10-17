@@ -10,7 +10,7 @@ import useEventHandlers from "./EventHandlers";
 import { getEvents, getFrostDates } from "./api"; // Import API functions
 import "./Calendar.css"; // Import styles
 
-function Calendar({ frostDates, userEmail }) {
+function Calendar({ frostDates, userEmail, onLogout }) {
 	const [events, setEvents] = useState([]);
 	const [editingEvent, setEditingEvent] = useState(null);
 	const [directionsVisible, setDirectionsVisible] = useState(true);
@@ -119,7 +119,7 @@ function Calendar({ frostDates, userEmail }) {
 				{/* Conditional rendering for directions or the event editing form */}
 				<div className="info-section">
 					{directionsVisible ? (
-						<Directions />
+						<Directions onLogout={onLogout} />
 					) : (
 						<EventForm
 							editingEvent={editingEvent}

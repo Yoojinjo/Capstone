@@ -3,7 +3,7 @@ import Register from "./Register";
 import Login from "./Login";
 import Calendar from "./Calendar";
 import EnterFrostDates from "./EnterFrostDates";
-import LogoutButton from "./LogOutButton";
+import LogOutButton from "./LogOutButton";
 import "./App.css";
 import { saveFrostDates, getFrostDates } from "./api";
 
@@ -94,7 +94,7 @@ function App() {
 				</>
 			)}
 			{/* If logged in, show EnterFrostDates */}
-			{loggedIn && (
+			{loggedIn && !frostDatesSaved && (
 				<EnterFrostDates
 					frostDates={frostDates}
 					setFrostDates={setFrostDates}
@@ -104,10 +104,12 @@ function App() {
 				/>
 			)}
 			{loggedIn && frostDatesSaved && (
-				<Calendar frostDates={frostDates} userEmail={userEmail} />
+				<Calendar
+					frostDates={frostDates}
+					userEmail={userEmail}
+					onLogout={handleLogout}
+				/>
 			)}
-
-			{loggedIn && <LogoutButton onLogout={handleLogout} />}
 		</div>
 	);
 }

@@ -1,4 +1,6 @@
-function Directions() {
+import LogoutButton from "./LogOutButton";
+
+function Directions({ onLogout }) {
 	return (
 		<div className="directions">
 			<div className="frostdates">
@@ -18,6 +20,7 @@ function Directions() {
 				You may edit events by either drag and dropping events to other
 				days or by clicking on an event to update details.
 			</p>
+			{onLogout && <LogoutButton onLogout={onLogout} />}
 		</div>
 	);
 }
