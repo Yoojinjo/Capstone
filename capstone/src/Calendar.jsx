@@ -19,7 +19,7 @@ import {
 
 import "./Calendar.css";
 
-function Calendar({ frostDates }) {
+function Calendar({ frostDates, userEmail }) {
 	const [events, setEvents] = useState([]);
 
 	const [editingEvent, setEditingEvent] = useState(null);
@@ -42,8 +42,8 @@ function Calendar({ frostDates }) {
 	// Fetch events from the backend on component mount
 	useEffect(() => {
 		const fetchAllEvents = async () => {
-			const fetchedEvents = await getEvents();
-			const frostDates = (await getFrostDates())[0];
+			const fetchedEvents = await getEvents(userEmail);
+			const frostDates = (await getFrostDates(userEmail))[0];
 
 			console.log("Fetched Events:", fetchedEvents);
 			console.log("Fetched Frost Dates:", frostDates);
@@ -63,7 +63,7 @@ function Calendar({ frostDates }) {
 		};
 
 		fetchAllEvents();
-	}, []);
+	}, [userEmail]);
 
 	// // Handle date click (for selecting a transplant date)
 	// const handleDateClick = (dateClickInfo) => {

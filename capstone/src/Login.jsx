@@ -13,9 +13,10 @@ function Login({ onLogin }) {
 			await signInWithEmailAndPassword(auth, email, password);
 			const isAuthenticated = true;
 			if (isAuthenticated) {
-				onLogin(); // Call the onLogin function passed from App
+				const userEmail = email;
+				onLogin(userEmail); // Pass user email to App
 			}
-			alert("Logged in successfully!");
+			// alert("Logged in successfully!");
 		} catch (error) {
 			console.error("Error logging in:", error);
 			alert("Failed to log in. Please check your credentials.");

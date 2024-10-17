@@ -14,11 +14,18 @@ function App() {
 	});
 	const [zipCode, setZipCode] = useState("");
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [userEmail, setUserEmail] = useState("");
 
-	// update login status
-	const handleLogin = () => {
+	const handleLogin = (email) => {
 		setLoggedIn(true);
+		setUserEmail(email); // Save user email on login
 	};
+
+	const handleLogout = () => {
+		setLoggedIn(false);
+		setUserEmail(""); // Clear email on logout
+	};
+
 	// Save frost dates handler
 	const handleSaveFrostDates = (firstFrost, lastFrost) => {
 		setFrostDates({ firstFrost, lastFrost });
@@ -28,17 +35,27 @@ function App() {
 	return (
 		<div className="app-container">
 			<h1>Fresh Tomatoes: Garden Planner (beta)</h1>
-			<Register />
-			<Login onLogin={handleLogin} /> {/* Pass handleLogin  to Login */}
-			{loggedIn && (
+			{/* Only show Register and Login if not logged in */}
+			{!loggedIn && (
+				<>
+					<Register />
+					<Login onLogin={handleLogin} />{" "}
+					{/* Pass handleLogin to Login */}
+				</>
+			)}
+
+			{loggedIn ? ( // Conditionally render based on login status
 				<EnterFrostDates
 					frostDates={frostDates}
 					setZipCode={setZipCode} // Pass the setter to manage the zip code
 					handleSaveFrostDates={handleSaveFrostDates}
+					userEmail={userEmail}
 				/>
+			) : (
+				<p>Please log in</p> // Message for non-logged-in users
 			)}
 			{/* Pass frostDates to Calendar */}
-			{/* <Calendar frostDates={frostDates} /> */}
+			<Calendar frostDates={frostDates} userEmail={userEmail} />
 		</div>
 	);
 }

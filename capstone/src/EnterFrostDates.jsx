@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import ZipcodeForm from "./ZipcodeForm";
 import { getFrostDates, saveFrostDates } from "./api";
 
-function EnterFrostDates({ frostDates, setZipCode }) {
+function EnterFrostDates({ frostDates, setZipCode, userEmail }) {
 	const [zipInput, setZipInput] = useState("");
 	const [firstFrost, setFirstFrost] = useState(frostDates.firstFrost || "");
 	const [lastFrost, setLastFrost] = useState(frostDates.lastFrost || "");
@@ -14,7 +14,7 @@ function EnterFrostDates({ frostDates, setZipCode }) {
 
 	const handleSaveFrostDates = async (firstFrost, lastFrost) => {
 		try {
-			await saveFrostDates(firstFrost, lastFrost);
+			await saveFrostDates(firstFrost, lastFrost, userEmail);
 			alert("Frost dates saved successfully!");
 		} catch (error) {
 			console.error("Error saving frost dates", error);
@@ -29,7 +29,6 @@ function EnterFrostDates({ frostDates, setZipCode }) {
 
 	return (
 		<div className="frostdates-section">
-			<h1>Fresh Tomatoes: Garden Planner (beta)</h1>
 			<h3>
 				Enter the first and last frost average dates for your region.
 			</h3>
@@ -58,7 +57,9 @@ function EnterFrostDates({ frostDates, setZipCode }) {
 			</div>
 			<form onSubmit={handleSubmit} className="frostdate-input">
 				<div>
-					<label htmlFor="firstFrost">First Frost Date:</label>
+					<label htmlFor="firstFrost">
+						First Frost Date of Fall:
+					</label>
 					<input
 						type="date"
 						id="firstFrost"
@@ -66,9 +67,12 @@ function EnterFrostDates({ frostDates, setZipCode }) {
 						onChange={(e) => setFirstFrost(e.target.value)}
 						required
 					/>
+					🍂
 				</div>
 				<div>
-					<label htmlFor="lastFrost">Last Frost Date:</label>
+					<label htmlFor="lastFrost">
+						Last Frost Date of Spring:
+					</label>
 					<input
 						type="date"
 						id="lastFrost"
@@ -76,7 +80,10 @@ function EnterFrostDates({ frostDates, setZipCode }) {
 						onChange={(e) => setLastFrost(e.target.value)}
 						required
 					/>
+					🌱
 				</div>
+
+				<br />
 				<button type="submit">Save Frost Dates</button>
 			</form>
 		</div>
