@@ -1,61 +1,57 @@
 import { useState } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebase"; // Assuming you have set up Firebase authentication
 
-function Register({ onRegister }) {
+const Register = ({ onRegister }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const auth = getAuth(); // Initialize the auth instance
+	const [error, setError] = useState("");
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setError(""); // Clear previous errors
 		try {
-			// Use the new createUserWithEmailAndPassword method
 			const userCredential = await createUserWithEmailAndPassword(
 				auth,
 				email,
 				password
 			);
-			const user = userCredential.user;
-			console.log("User registered:", user);
-
-			// Optionally trigger onRegister with the user's email
-			onRegister(user.email);
-		} catch (error) {
-			console.error("Error registering user:", error);
-			alert("Failed to register. Please check your credentials.");
+			onRegister(userCredential.user.email); // Call the onRegister function with the user's email
+		} catch (err) {
+			if (err.code === "auth/email-already-in-use") {
+				setError(
+					"This email is already in use. Please log in or use a different email."
+				);
+			} else {
+				setError(`Error registering user: ${err.message}`);
+			}
+			console.error("Error registering user:", err);
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
-			<fieldset>
-				<legend>Register</legend>
-				<div>
-					<label htmlFor="register-email">Email:</label>
-					<input
-						type="email"
-						id="register-email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						placeholder="Enter your email"
-						required
-					/>
-				</div>
-				<div>
-					<label htmlFor="register-password">Password:</label>
-					<input
-						type="password"
-						id="register-password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						placeholder="Enter your password"
-						required
-					/>
-				</div>
+		<div>
+			<h2>Register</h2>
+			{error && <p style={{ color: "red" }}>{error}</p>}
+			<form onSubmit={handleSubmit}>
+				<input
+					type="email"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					placeholder="Email"
+					required
+				/>
+				<input
+					type="password"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					placeholder="Password"
+					required
+				/>
 				<button type="submit">Register</button>
-			</fieldset>
-		</form>
+			</form>
+		</div>
 	);
-}
+};
 
 export default Register;

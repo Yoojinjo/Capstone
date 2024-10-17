@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase"; // Make sure this is the correct path to your firebase.js file
+import { auth } from "./firebase"; // Ensure this is correctly pointing to your Firebase config
 
 function Login({ onLogin }) {
 	const [email, setEmail] = useState("");
@@ -8,16 +8,10 @@ function Login({ onLogin }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
 		try {
-			// Sign in the user using Firebase authentication
 			await signInWithEmailAndPassword(auth, email, password);
-
-			// Once signed in, get the user's email from the auth object
 			const userEmail = auth.currentUser.email;
-
-			// Trigger onLogin with the user's email
-			onLogin(userEmail);
+			onLogin(userEmail); // Pass user email to onLogin
 		} catch (error) {
 			console.error("Error logging in:", error);
 			alert("Failed to log in. Please check your credentials.");
