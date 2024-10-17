@@ -10,13 +10,14 @@ function Login({ onLogin }) {
 		e.preventDefault();
 
 		try {
+			// Sign in the user using Firebase authentication
 			await signInWithEmailAndPassword(auth, email, password);
-			const isAuthenticated = true;
-			if (isAuthenticated) {
-				const userEmail = email;
-				onLogin(userEmail); // Pass user email to App
-			}
-			// alert("Logged in successfully!");
+
+			// Once signed in, get the user's email from the auth object
+			const userEmail = auth.currentUser.email;
+
+			// Trigger onLogin with the user's email
+			onLogin(userEmail);
 		} catch (error) {
 			console.error("Error logging in:", error);
 			alert("Failed to log in. Please check your credentials.");
@@ -24,22 +25,33 @@ function Login({ onLogin }) {
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<input
-				type="email"
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-				placeholder="Email"
-				required
-			/>
-			<input
-				type="password"
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
-				placeholder="Password"
-				required
-			/>
-			<button type="submit">Login</button>
+		<form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
+			<fieldset>
+				<legend>Login</legend>
+				<div>
+					<label htmlFor="email">Email:</label>
+					<input
+						type="email"
+						id="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						placeholder="Enter your email"
+						required
+					/>
+				</div>
+				<div>
+					<label htmlFor="password">Password:</label>
+					<input
+						type="password"
+						id="password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						placeholder="Enter your password"
+						required
+					/>
+				</div>
+				<button type="submit">Login</button>
+			</fieldset>
 		</form>
 	);
 }

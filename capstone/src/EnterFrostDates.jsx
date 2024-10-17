@@ -1,12 +1,11 @@
 import { useState } from "react";
 import ZipcodeForm from "./ZipcodeForm";
-import { saveFrostDates } from "./api";
 
 function EnterFrostDates({
 	frostDates,
-	setFrostDates,
+
 	setZipCode,
-	userEmail,
+
 	handleSaveFrostDates,
 }) {
 	const [zipInput, setZipInput] = useState("");

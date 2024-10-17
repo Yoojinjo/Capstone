@@ -88,6 +88,7 @@ function App() {
 			{!loggedIn && (
 				<>
 					<Register />
+					<br />
 					<Login onLogin={handleLogin} />{" "}
 					{/* Pass handleLogin to Login */}
 				</>
